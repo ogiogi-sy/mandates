@@ -139,7 +139,7 @@ export function ScreenApprovalRule({ onContinue, defaultThreshold = 5000, isSole
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-4">
       {/* Header */}
       <div className="space-y-2">
         <h2 className="text-[var(--text-primary)]">How should payments be approved?</h2>
@@ -165,10 +165,10 @@ export function ScreenApprovalRule({ onContinue, defaultThreshold = 5000, isSole
                   w-full p-5 rounded-[var(--radius-lg)] bg-[var(--background-surface)] text-left
                   flex items-center gap-4 transition-all
                   ${card.disabled
-                    ? 'opacity-50 cursor-not-allowed border border-[var(--divider)]'
+                    ? 'opacity-50 cursor-not-allowed border-2 border-[var(--divider)]'
                     : isSelected
                       ? 'border-2 border-[var(--accent-primary)] shadow-[var(--shadow-card-md)]'
-                      : 'border border-[var(--divider)] shadow-[var(--shadow-card-sm)] hover:border-[var(--accent-primary)]'}
+                      : 'border-2 border-[var(--divider)] shadow-[var(--shadow-card-sm)] hover:border-[var(--accent-primary)]'}
                 `}
               >
                 <div className={`
@@ -255,6 +255,7 @@ export function ScreenApprovalRule({ onContinue, defaultThreshold = 5000, isSole
                               </span>
                               <input
                                 type="text"
+                                inputMode="decimal"
                                 value={customAmount}
                                 onChange={(e) => handleCustomAmountChange(e.target.value)}
                                 placeholder="Enter amount (min £500, max £1,000,000)"

@@ -100,6 +100,16 @@ export function ScreenMandateSummary({
   const [showSimulator, setShowSimulator] = useState(false);
   const [simAmount, setSimAmount] = useState('');
   const [simInitiator, setSimInitiator] = useState<string>('non-director');
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    approvalFlow: false,
+    permissions: true,
+    activation: true,
+    governance: false,
+  });
+
+  const toggleSection = (key: string) => {
+    setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   // ─── signature pad state ───
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -416,11 +426,11 @@ export function ScreenMandateSummary({
           )}
 
           {/* Edit + Simulate */}
-          <div className="flex items-center gap-[var(--space-lg)] px-[var(--space-lg)] pb-[var(--space-lg)] border-t border-[var(--divider)] pt-[var(--space-md)]">
+          <div className="flex items-center gap-[var(--space-lg)] px-[var(--space-lg)] pb-[var(--space-md)] border-t border-[var(--divider)] pt-[var(--space-xs)]">
             {!mandate.locked && (
               <button
                 onClick={onEditRule}
-                className="flex items-center gap-1 text-[var(--accent-primary)] hover:opacity-80 transition-opacity"
+                className="flex items-center gap-1 text-[var(--accent-primary)] hover:opacity-80 transition-opacity min-h-[44px] py-2"
                 style={{ fontSize: '13px', fontWeight: 600 }}
               >
                 Edit rule
@@ -428,14 +438,14 @@ export function ScreenMandateSummary({
               </button>
             )}
             {mandate.locked && (
-              <span className="flex items-center gap-1 text-[var(--text-muted)]" style={{ fontSize: '12px', fontWeight: 500 }}>
+              <span className="flex items-center gap-1 text-[var(--text-muted)] min-h-[44px]" style={{ fontSize: '12px', fontWeight: 500 }}>
                 <Lock size={12} />
                 Locked
               </span>
             )}
             <button
               onClick={() => setShowSimulator(!showSimulator)}
-              className="flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
+              className="flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors min-h-[44px] py-2"
               style={{ fontSize: '13px', fontWeight: 600 }}
             >
               <Play size={12} />
@@ -533,10 +543,21 @@ export function ScreenMandateSummary({
     // Build flow steps based on rule
     const isThreshold = mandate.approvalRule === 'threshold';
     const isTwoRequired = mandate.approvalRule === 'two_required';
+    const isOpen = expandedSections.approvalFlow;
 
     return (
       <div>
-        <SectionLabel>Approval flow</SectionLabel>
+        <button
+          type="button"
+          onClick={() => toggleSection('approvalFlow')}
+          className="w-full flex items-center justify-between mb-[var(--space-sm)] ml-0.5 min-h-[44px]"
+        >
+          <SectionLabel>Approval flow</SectionLabel>
+          <ChevronDown size={16} className={`text-[var(--text-muted)] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+        <AnimatePresence initial={false}>
+        {isOpen && (
+        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
         <div className="bg-[var(--background-surface)] rounded-[var(--radius-lg)] border border-[var(--divider)] shadow-[var(--shadow-card-sm)] p-[var(--space-lg)]">
           {isThreshold && (
             <div className="flex flex-col sm:flex-row gap-[var(--space-md)]">
@@ -586,6 +607,9 @@ export function ScreenMandateSummary({
             If the initiator is a director, they count as the first approver. Approval is sequential — each approver is notified in turn.
           </p>
         </div>
+        </motion.div>
+        )}
+        </AnimatePresence>
       </div>
     );
   };
@@ -600,10 +624,21 @@ export function ScreenMandateSummary({
       { key: 'approvePayments', label: 'Approve', icon: <UserCheck size={12} /> },
       { key: 'manageTeam', label: 'Manage', icon: <Users size={12} /> },
     ];
+    const isOpen = expandedSections.permissions;
 
     return (
       <div>
-        <SectionLabel>Team &amp; permissions</SectionLabel>
+        <button
+          type="button"
+          onClick={() => toggleSection('permissions')}
+          className="w-full flex items-center justify-between mb-[var(--space-sm)] ml-0.5 min-h-[44px]"
+        >
+          <SectionLabel>Team &amp; permissions</SectionLabel>
+          <ChevronDown size={16} className={`text-[var(--text-muted)] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+        <AnimatePresence initial={false}>
+        {isOpen && (
+        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
         <div className="bg-[var(--background-surface)] rounded-[var(--radius-lg)] border border-[var(--divider)] shadow-[var(--shadow-card-sm)] overflow-hidden">
           {/* Person cards - mobile-friendly stacked layout */}
           {allPersons.map((person, idx) => {
@@ -661,6 +696,9 @@ export function ScreenMandateSummary({
             );
           })}
         </div>
+        </motion.div>
+        )}
+        </AnimatePresence>
       </div>
     );
   };
@@ -692,10 +730,21 @@ export function ScreenMandateSummary({
     ];
 
     const allComplete = conditions.every(c => c.done);
+    const isOpen = expandedSections.activation;
 
     return (
       <div>
-        <SectionLabel>Mandate activation</SectionLabel>
+        <button
+          type="button"
+          onClick={() => toggleSection('activation')}
+          className="w-full flex items-center justify-between mb-[var(--space-sm)] ml-0.5 min-h-[44px]"
+        >
+          <SectionLabel>Mandate activation</SectionLabel>
+          <ChevronDown size={16} className={`text-[var(--text-muted)] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+        <AnimatePresence initial={false}>
+        {isOpen && (
+        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
         <div className="bg-[var(--background-surface)] rounded-[var(--radius-lg)] border border-[var(--divider)] shadow-[var(--shadow-card-sm)] overflow-hidden">
           {conditions.map((cond, idx) => (
             <div key={idx} className={`flex items-start gap-[var(--space-md)] px-[var(--space-lg)] py-3 ${idx > 0 ? 'border-t border-[var(--divider)]' : ''}`}>
@@ -730,6 +779,9 @@ export function ScreenMandateSummary({
             </p>
           </div>
         </div>
+        </motion.div>
+        )}
+        </AnimatePresence>
       </div>
     );
   };
@@ -839,16 +891,20 @@ export function ScreenMandateSummary({
    * ───────────────────────────────────────────────── */
   const renderDeclaration = () => (
     <label className="flex items-start gap-3 cursor-pointer p-4 rounded-[var(--radius-md)] bg-[var(--background-surface)] border border-[var(--divider)]">
-      <div className="mt-0.5">
-        <div
-          onClick={(e) => { e.preventDefault(); setDeclared(!declared); }}
-          className={`
-            w-5 h-5 rounded-[4px] border-2 flex items-center justify-center cursor-pointer transition-all shrink-0
-            ${declared
-              ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)]'
-              : 'bg-white border-[var(--text-muted)]'}
-          `}
-        >
+      <div className="mt-0.5 relative">
+        <input
+          type="checkbox"
+          checked={declared}
+          onChange={() => setDeclared(!declared)}
+          className="peer sr-only"
+        />
+        <div className={`
+          w-5 h-5 rounded-[4px] border-2 flex items-center justify-center transition-all shrink-0
+          peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--accent-primary)] peer-focus-visible:ring-offset-2
+          ${declared
+            ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)]'
+            : 'bg-white border-[var(--text-muted)]'}
+        `}>
           {declared && <Check size={12} className="text-white" strokeWidth={3} />}
         </div>
       </div>
@@ -881,7 +937,7 @@ export function ScreenMandateSummary({
               type="button"
               onClick={() => switchSignatureMode('draw')}
               className={`
-                flex-1 flex items-center justify-center gap-1.5 py-2 rounded-[4px] transition-all
+                flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-[4px] transition-all
                 ${signatureMode === 'draw'
                   ? 'bg-[var(--background-surface)] shadow-sm text-[var(--accent-primary)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}
@@ -895,7 +951,7 @@ export function ScreenMandateSummary({
               type="button"
               onClick={() => switchSignatureMode('upload')}
               className={`
-                flex-1 flex items-center justify-center gap-1.5 py-2 rounded-[4px] transition-all
+                flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-[4px] transition-all
                 ${signatureMode === 'upload'
                   ? 'bg-[var(--background-surface)] shadow-sm text-[var(--accent-primary)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}
@@ -983,7 +1039,7 @@ export function ScreenMandateSummary({
                 onClick={clearSignature}
                 disabled={!hasSigned}
                 className={`
-                  flex items-center gap-1.5 transition-all
+                  flex items-center gap-1.5 transition-all min-h-[44px] py-2
                   ${hasSigned
                     ? 'text-[var(--text-secondary)] hover:text-[var(--accent-primary)]'
                     : 'text-[var(--text-muted)] cursor-not-allowed opacity-50'}
@@ -1113,6 +1169,21 @@ export function ScreenMandateSummary({
   );
 
   /* ─── confirm button ─── */
+  const handleConfirmClick = () => {
+    if (canConfirm) {
+      onConfirm();
+      return;
+    }
+    // Show reason why the button is disabled
+    if (!declared && !hasSigned) {
+      toast.error('Please tick the declaration and sign below to confirm.');
+    } else if (!declared) {
+      toast.error('Please tick the declaration checkbox to continue.');
+    } else if (!hasSigned) {
+      toast.error('Please draw or upload your signature to continue.');
+    }
+  };
+
   const confirmButton = mandate.locked ? (
     <div className="flex items-center justify-center gap-2 w-full h-[48px] rounded-[var(--radius-pill)] bg-[var(--emerald-50)] border border-[var(--emerald-600)]/20">
       <Check size={18} className="text-[var(--emerald-600)]" strokeWidth={3} />
@@ -1128,14 +1199,14 @@ export function ScreenMandateSummary({
   ) : (
     <button
       type="button"
-      onClick={onConfirm}
-      disabled={!canConfirm}
+      onClick={handleConfirmClick}
       className={`
         w-full h-[48px] rounded-[var(--radius-pill)] transition-all flex items-center justify-center
         ${canConfirm
           ? 'bg-[var(--brand-primary-navy)] text-[var(--text-on-dark)] hover:opacity-90 shadow-[var(--shadow-card-lg)]'
-          : 'bg-[var(--divider)] text-[var(--text-muted)] cursor-not-allowed'}
+          : 'bg-[var(--divider)] text-[var(--text-muted)]'}
       `}
+      aria-disabled={!canConfirm}
     >
       Confirm mandate
     </button>
@@ -1185,7 +1256,7 @@ export function ScreenMandateSummary({
   return (
     <div className="min-h-screen bg-[var(--background-app)] flex flex-col" style={{ fontFamily: 'var(--font-family)' }}>
       <div className="sticky top-0 z-30 flex items-center gap-[var(--space-md)] p-[var(--space-lg)] border-b border-[var(--divider)] bg-[var(--background-surface)]">
-        <button type="button" onClick={onBack} className="text-[var(--text-primary)] hover:bg-[var(--background-surface-soft)] p-1 rounded-full transition-colors">
+        <button type="button" onClick={onBack} className="w-10 h-10 flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--background-surface-soft)] rounded-full transition-colors" aria-label="Go back">
           <ChevronLeft size={24} />
         </button>
         <div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { User, Users, ChevronRight, Upload, Check, X, FileText, ShieldCheck } from 'lucide-react';
 import { StickyFooter } from './StickyFooter';
 import { motion, AnimatePresence } from 'motion/react';
@@ -22,6 +22,42 @@ export function ScreenAuthorityConfirmation({ companyName, directorCount, onCont
   const [showBoardSheet, setShowBoardSheet] = useState(false);
   const [boardFile, setBoardFile] = useState<string | null>(null);
   const [boardDeclared, setBoardDeclared] = useState(false);
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  // Focus trap + Escape key for bottom sheet
+  useEffect(() => {
+    if (!showBoardSheet) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowBoardSheet(false);
+        return;
+      }
+      if (e.key === 'Tab' && sheetRef.current) {
+        const focusable = sheetRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    // Focus first focusable element on open
+    requestAnimationFrame(() => {
+      const first = sheetRef.current?.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      first?.focus();
+    });
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showBoardSheet]);
 
   const canContinue = selected !== null && declared;
 
@@ -121,10 +157,10 @@ export function ScreenAuthorityConfirmation({ companyName, directorCount, onCont
         })}
       </div>
 
-      {/* Board authorisation link */}
+      {/* Board authorisation link — min 44px touch target */}
       <button
         onClick={() => setShowBoardSheet(true)}
-        className="text-[var(--accent-primary)] flex items-center gap-1 hover:opacity-80 transition-opacity"
+        className="text-[var(--accent-primary)] flex items-center gap-1 hover:opacity-80 transition-opacity min-h-[44px] py-2"
         style={{ fontSize: '13px', lineHeight: '16px', fontWeight: 500 }}
       >
         Acting on behalf of the board?
@@ -133,16 +169,20 @@ export function ScreenAuthorityConfirmation({ companyName, directorCount, onCont
 
       {/* Declaration checkbox */}
       <label className="flex items-start gap-3 cursor-pointer p-4 rounded-[var(--radius-md)] bg-[var(--background-surface)] border border-[var(--divider)]">
-        <div className="mt-0.5">
-          <div
-            onClick={(e) => { e.preventDefault(); setDeclared(!declared); }}
-            className={`
-              w-5 h-5 rounded-[4px] border-2 flex items-center justify-center cursor-pointer transition-all
-              ${declared
-                ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)]'
-                : 'bg-white border-[var(--text-muted)]'}
-            `}
-          >
+        <div className="mt-0.5 relative">
+          <input
+            type="checkbox"
+            checked={declared}
+            onChange={() => setDeclared(!declared)}
+            className="peer sr-only"
+          />
+          <div className={`
+            w-5 h-5 rounded-[4px] border-2 flex items-center justify-center transition-all
+            peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--accent-primary)] peer-focus-visible:ring-offset-2
+            ${declared
+              ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)]'
+              : 'bg-white border-[var(--text-muted)]'}
+          `}>
             {declared && <Check size={12} className="text-white" strokeWidth={3} />}
           </div>
         </div>
@@ -181,6 +221,10 @@ export function ScreenAuthorityConfirmation({ companyName, directorCount, onCont
             />
             {/* Sheet */}
             <motion.div
+              ref={sheetRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Board authorisation"
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
@@ -192,7 +236,7 @@ export function ScreenAuthorityConfirmation({ companyName, directorCount, onCont
 
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-[var(--text-primary)]">Authorised by the board?</h3>
-                <button onClick={() => setShowBoardSheet(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)]">
+                <button onClick={() => setShowBoardSheet(false)} className="w-10 h-10 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--background-surface-soft)] transition-colors" aria-label="Close">
                   <X size={20} />
                 </button>
               </div>
@@ -231,16 +275,22 @@ export function ScreenAuthorityConfirmation({ companyName, directorCount, onCont
 
               {/* Board declaration */}
               <label className="flex items-start gap-3 cursor-pointer mt-6 mb-6">
-                <div
-                  onClick={(e) => { e.preventDefault(); setBoardDeclared(!boardDeclared); }}
-                  className={`
-                    w-5 h-5 rounded-[4px] border-2 flex items-center justify-center cursor-pointer transition-all mt-0.5 shrink-0
+                <div className="mt-0.5 relative shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={boardDeclared}
+                    onChange={() => setBoardDeclared(!boardDeclared)}
+                    className="peer sr-only"
+                  />
+                  <div className={`
+                    w-5 h-5 rounded-[4px] border-2 flex items-center justify-center transition-all
+                    peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--accent-primary)] peer-focus-visible:ring-offset-2
                     ${boardDeclared
                       ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)]'
                       : 'bg-white border-[var(--text-muted)]'}
-                  `}
-                >
-                  {boardDeclared && <Check size={12} className="text-white" strokeWidth={3} />}
+                  `}>
+                    {boardDeclared && <Check size={12} className="text-white" strokeWidth={3} />}
+                  </div>
                 </div>
                 <span className="text-[var(--text-secondary)]" style={{ fontSize: '13px', lineHeight: '18px', fontWeight: 400 }}>
                   I confirm I have been authorised by a board resolution to open and manage this account on behalf of {companyName}.

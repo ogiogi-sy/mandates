@@ -203,9 +203,14 @@ export function ScreenTeamMembers({
 
           {/* Section label */}
           {teamMembers.some(m => m.isFromCompaniesHouse) && (
-            <label className="text-[var(--text-muted)] ml-1 block">
-              Directors from Companies House
-            </label>
+            <div>
+              <p className="text-[var(--text-muted)] ml-0.5 mb-1" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                Directors from Companies House
+              </p>
+              <p className="text-[var(--text-muted)] ml-0.5 mb-[var(--space-sm)]" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
+                Inviting a director sends them an email to verify their identity and accept the mandate.
+              </p>
+            </div>
           )}
 
           {/* Team member cards */}
@@ -436,7 +441,7 @@ export function ScreenTeamMembers({
           {/* Navigation bar */}
           <div className="sticky top-0 z-30 flex items-center justify-between p-[var(--space-lg)] border-b border-[var(--divider)] bg-[var(--background-surface)]">
             <div className="flex items-center gap-[var(--space-md)]">
-              <button type="button" onClick={onDone} className="text-[var(--text-primary)] hover:bg-[var(--background-surface-soft)] p-1 rounded-full transition-colors">
+              <button type="button" onClick={onDone} className="w-10 h-10 flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--background-surface-soft)] rounded-full transition-colors" aria-label="Go back">
                 <ChevronLeft size={24} />
               </button>
               <h3 className="text-[var(--text-primary)]">{context === 'flow' ? 'Set up your team' : 'Your team'}</h3>
@@ -510,9 +515,14 @@ export function ScreenTeamMembers({
 
                 {/* Section label */}
                 {teamMembers.some(m => m.isFromCompaniesHouse) && (
-                  <label className="text-[var(--text-muted)] ml-1 mt-4 block">
-                    Directors from Companies House
-                  </label>
+                  <div className="mt-4">
+                    <p className="text-[var(--text-muted)] ml-0.5 mb-1" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                      Directors from Companies House
+                    </p>
+                    <p className="text-[var(--text-muted)] ml-0.5" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
+                      Inviting a director sends them an email to verify their identity and accept the mandate.
+                    </p>
+                  </div>
                 )}
 
                 {/* Team member cards */}
