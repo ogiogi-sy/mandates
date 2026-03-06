@@ -252,7 +252,7 @@ export function TemplateValidation() {
       setCheckedTests(checkedTests.filter(id => id !== testId));
     } else {
       setCheckedTests([...checkedTests, testId]);
-      toast.success('Test validated!');
+      toast.success('Test validated');
     }
   };
 
@@ -261,7 +261,7 @@ export function TemplateValidation() {
   };
 
   const handleRunAllTests = () => {
-    toast.success(`All ${totalTests} tests passed! ✅`, {
+    toast.success(`All ${totalTests} tests passed`, {
       description: 'Template is 100% design system compliant'
     });
   };
@@ -483,7 +483,7 @@ export function TemplateValidation() {
             onClick={handleRunAllTests}
             className="w-full bg-white text-brand-navy py-3 px-6 rounded-full hover:opacity-90 transition-opacity font-medium"
           >
-            Run All Tests
+            Run all tests
           </button>
         </div>
       </div>
@@ -560,12 +560,12 @@ export function TemplateValidation() {
               {/* Primary */}
               <button
                 onClick={() => {
-                  toast.success('Test validated!');
+                  toast.success('Test validated');
                   setIsSheetOpen(false);
                 }}
                 className="w-full bg-brand-navy text-white py-3 px-6 rounded-full hover:opacity-90 transition-opacity"
               >
-                Mark as Validated
+                Mark as validated
               </button>
 
               {/* Secondary */}
@@ -573,7 +573,7 @@ export function TemplateValidation() {
                 onClick={() => toast.info('Test details logged')}
                 className="w-full bg-brand-blue text-white py-2 px-4 rounded-xl hover:opacity-90 transition-opacity"
               >
-                View Documentation
+                View documentation
               </button>
 
               {/* Tertiary */}

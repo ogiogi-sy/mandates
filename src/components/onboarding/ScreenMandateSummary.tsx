@@ -181,11 +181,11 @@ export function ScreenMandateSummary({
   // ─── upload signature handlers ───
   const handleFileSelect = useCallback((file: File) => {
     if (!file.type.startsWith('image/')) {
-      toast.error('Please upload an image file (PNG, JPG, or SVG)');
+      toast.error("That file type isn't supported. Please upload a PNG, JPG, or SVG.");
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size must be under 5MB');
+      toast.error('That file is too large. Please upload one under 5MB.');
       return;
     }
     const reader = new FileReader();
@@ -420,7 +420,7 @@ export function ScreenMandateSummary({
           {mandate.approvalRule === 'threshold' && (
             <div className="px-[var(--space-lg)] pb-[var(--space-md)]">
               <p className="text-[var(--text-muted)]" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
-                Threshold is applied per transaction. The initiating director counts toward the required approver count.
+                We apply the threshold per transaction. The initiating director counts toward the required approver count.
               </p>
             </div>
           )}
@@ -633,7 +633,7 @@ export function ScreenMandateSummary({
           onClick={() => toggleSection('permissions')}
           className="w-full flex items-center justify-between mb-[var(--space-sm)] ml-0.5 min-h-[44px]"
         >
-          <SectionLabel>Team &amp; permissions</SectionLabel>
+          <SectionLabel>Team and permissions</SectionLabel>
           <ChevronDown size={16} className={`text-[var(--text-muted)] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
         <AnimatePresence initial={false}>
@@ -724,8 +724,8 @@ export function ScreenMandateSummary({
         label: 'All directors accepted mandate terms',
         done: mandate.teamMembers.every(m => m.role !== 'director' || m.hasAcceptedMandate),
         detail: mandate.teamMembers.every(m => m.role !== 'director' || m.hasAcceptedMandate)
-          ? 'Digital acceptance recorded for all directors'
-          : 'Pending acceptance from unverified directors',
+          ? 'All directors have accepted digitally'
+          : "Some directors haven't accepted yet",
       },
     ];
 
@@ -774,8 +774,8 @@ export function ScreenMandateSummary({
           <div className={`px-[var(--space-lg)] py-[var(--space-md)] border-t border-[var(--divider)] ${allComplete ? 'bg-[var(--emerald-50)]' : 'bg-[var(--amber-50)]'}`}>
             <p style={{ fontSize: '12px', fontWeight: 600, color: allComplete ? 'var(--emerald-600)' : 'var(--amber-600)' }}>
               {allComplete
-                ? 'All conditions met — rule will activate on confirmation.'
-                : 'Approval rule will not take full effect until all conditions are met.'}
+                ? 'All conditions met — your rule will activate when you confirm.'
+                : "Your approval rule won't fully apply until all directors are verified and have accepted."}
             </p>
           </div>
         </div>
@@ -867,7 +867,7 @@ export function ScreenMandateSummary({
     if (!allDirectorsVerified) {
       bullets.push({
         icon: <AlertTriangle size={13} />,
-        text: 'Approval protection is not active until all directors verify and accept.',
+        text: "Your approval protection won't be active until all directors have verified and accepted.",
         color: 'var(--amber-600)',
       });
     }
@@ -909,7 +909,7 @@ export function ScreenMandateSummary({
         </div>
       </div>
       <span className="text-[var(--text-secondary)]" style={{ fontSize: '13px', lineHeight: '18px', fontWeight: 400 }}>
-        I confirm this accurately reflects the authorised persons, approval rules, and governance controls for this account.
+        I confirm the people, approval rules, and controls for this account are correct.
       </span>
     </label>
   );
@@ -928,7 +928,7 @@ export function ScreenMandateSummary({
             <span className="text-[var(--text-primary)]" style={{ fontSize: '15px', fontWeight: 600 }}>Sign to confirm</span>
           </div>
           <p className="text-[var(--text-muted)] mb-[var(--space-md)]" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
-            Draw or upload your signature to authorise this mandate. This constitutes your digital acceptance.
+            Draw or upload your signature to authorise this mandate. This counts as your digital acceptance.
           </p>
 
           {/* Tab switcher */}
@@ -1176,11 +1176,11 @@ export function ScreenMandateSummary({
     }
     // Show reason why the button is disabled
     if (!declared && !hasSigned) {
-      toast.error('Please tick the declaration and sign below to confirm.');
+      toast.error('Tick the declaration and add your signature to continue.');
     } else if (!declared) {
-      toast.error('Please tick the declaration checkbox to continue.');
+      toast.error('Tick the declaration to continue.');
     } else if (!hasSigned) {
-      toast.error('Please draw or upload your signature to continue.');
+      toast.error('Add your signature to continue.');
     }
   };
 
@@ -1234,7 +1234,7 @@ export function ScreenMandateSummary({
     return (
       <div className="space-y-[var(--space-xl)]" style={{ fontFamily: 'var(--font-family)' }}>
         <div className="space-y-2">
-          <h2 className="text-[var(--text-primary)]">Account governance summary</h2>
+          <h2 className="text-[var(--text-primary)]">Account summary</h2>
           <p className="text-[var(--text-secondary)]">Review your approval rules, team permissions, and mandate activation status.</p>
           {mandate.mandateVersion && (
             <p className="text-[var(--text-muted)]" style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.02em' }}>
@@ -1260,7 +1260,7 @@ export function ScreenMandateSummary({
           <ChevronLeft size={24} />
         </button>
         <div>
-          <h3 className="text-[var(--text-primary)]">Account governance summary</h3>
+          <h3 className="text-[var(--text-primary)]">Account summary</h3>
           {mandate.mandateVersion && (
             <p className="text-[var(--text-muted)]" style={{ fontSize: '10px', fontWeight: 500 }}>
               {mandate.mandateVersion}

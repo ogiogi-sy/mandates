@@ -15,7 +15,7 @@ export function ScreenQuestionMonthlyIncome({ onNext, onSaveExit, prefilled = fa
 
   return (
     <ScreenBusinessQuestionLayout
-      title="Monthly Income"
+      title="Monthly income"
       subtitle="What is your average monthly income?"
       onNext={() => onNext(selected)}
       onSaveExit={onSaveExit}

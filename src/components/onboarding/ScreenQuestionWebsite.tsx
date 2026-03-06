@@ -12,7 +12,7 @@ export function ScreenQuestionWebsite({ onNext, onSaveExit }: ScreenQuestionWebs
 
   return (
     <ScreenBusinessQuestionLayout
-      title="Company Website"
+      title="Company website"
       subtitle="Does your business have a website? If not, leave blank."
       onNext={() => onNext(website || 'No website')}
       onSaveExit={onSaveExit}
@@ -20,7 +20,7 @@ export function ScreenQuestionWebsite({ onNext, onSaveExit }: ScreenQuestionWebs
     >
       <div className="pt-2">
         <label className="text-xs font-bold text-text-secondary uppercase tracking-wider ml-1 mb-2 block">
-          Website URL
+          Website address
         </label>
         <div className="relative">
           <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary" size={20} />

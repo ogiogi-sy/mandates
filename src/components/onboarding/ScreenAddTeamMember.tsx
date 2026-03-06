@@ -129,12 +129,12 @@ export function ScreenAddTeamMember({
   const togglePermission = (key: keyof TeamMember['permissions']) => {
     // Manage Team restricted to directors only
     if (key === 'manageTeam' && !isDirector) {
-      toast.error('Manage Team is restricted to directors');
+      toast.error('Only directors can manage the team');
       return;
     }
     // Approve Payments requires identity verification
     if (key === 'approvePayments' && isUnverifiedMember) {
-      toast.error('Approve Payments requires identity verification');
+      toast.error('This person needs to verify their identity before they can approve payments');
       return;
     }
     setHasManualOverride(true);
@@ -460,8 +460,8 @@ export function ScreenAddTeamMember({
               </span>
               <p className="text-[var(--text-secondary)] mt-0.5" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
                 {permissions.approvePayments
-                  ? 'This person can approve payments and must complete identity verification, sanctions screening, and digitally accept the mandate.'
-                  : 'This person can initiate payments and must complete identity verification and sanctions screening.'}
+                  ? "This person can approve payments, so they'll need to verify their identity, pass screening checks, and accept the mandate."
+                  : "This person can start payments, so they'll need to verify their identity and pass screening checks."}
               </p>
             </div>
           </div>
@@ -473,10 +473,10 @@ export function ScreenAddTeamMember({
             <ShieldAlert size={14} className="text-[var(--emerald-600)] mt-0.5 shrink-0" />
             <div>
               <span className="text-[var(--emerald-600)]" style={{ fontSize: '13px', lineHeight: '16px', fontWeight: 600 }}>
-                Segregation of duties enforced
+                Payment roles separated
               </span>
               <p className="text-[var(--text-secondary)] mt-0.5" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
-                This person can create payments but cannot approve them. A separate authorised approver must sign off before funds are released.
+                This person can create payments but can't approve them. A different approver will need to sign off before we release the funds.
               </p>
             </div>
           </div>

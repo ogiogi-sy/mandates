@@ -56,7 +56,7 @@ export function ContactVerification({ email, onVerified, onResend }: ContactVeri
 
       <div className="pt-4">
         <label className="text-xs font-bold text-text-primary uppercase tracking-wide mb-4 block">
-          Email Verification Code *
+          Email verification code *
         </label>
         
         <div className="grid grid-cols-6 gap-2 sm:gap-4 mb-8">

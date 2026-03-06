@@ -26,7 +26,7 @@ export function ScreenLocation({ registeredAddress, onContinue }: ScreenLocation
       {/* Card 1: Correspondence Address */}
       <div className="bg-white rounded-[20px] border border-divider overflow-hidden shadow-sm">
         <div className="p-5 border-b border-divider bg-offwhite-50/50">
-          <h3 className="font-bold text-brand-navy text-sm uppercase tracking-wide">Correspondence Address</h3>
+          <h3 className="font-bold text-brand-navy text-sm uppercase tracking-wide">Correspondence address</h3>
         </div>
         
         {/* Option: Registered */}
@@ -90,7 +90,7 @@ export function ScreenLocation({ registeredAddress, onContinue }: ScreenLocation
       {/* Card 2: Local Branch */}
       <div className="bg-white rounded-[20px] border border-divider overflow-hidden shadow-sm">
         <div className="p-5 border-b border-divider bg-offwhite-50/50">
-          <h3 className="font-bold text-brand-navy text-sm uppercase tracking-wide">Your Local Branch</h3>
+          <h3 className="font-bold text-brand-navy text-sm uppercase tracking-wide">Your local branch</h3>
         </div>
 
         {!isBranchSearching ? (

@@ -9,7 +9,7 @@ export function ScreenSuccess() {
         </div>
         
         <h1 className="text-3xl font-bold text-brand-navy mb-3">Application submitted</h1>
-        <p className="text-text-secondary font-medium">Most applications are approved within 2 hours.</p>
+        <p className="text-text-secondary font-medium">We approve most applications within 2 hours.</p>
 
         <div className="w-full bg-white rounded-2xl p-6 border border-divider shadow-sm mt-8 text-left">
           <p className="text-xs font-bold text-text-muted uppercase tracking-wide mb-1">Application reference</p>

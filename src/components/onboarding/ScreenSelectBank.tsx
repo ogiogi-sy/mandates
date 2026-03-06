@@ -44,7 +44,7 @@ export function ScreenSelectBank({ onSelect, onBack }: ScreenSelectBankProps) {
       </div>
 
       <div className="grid grid-cols-1 gap-2">
-        <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wide mb-2 mt-2">Popular Banks</h3>
+        <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wide mb-2 mt-2">Popular banks</h3>
         {filteredBanks.map((bank) => (
           <button
             key={bank.name}

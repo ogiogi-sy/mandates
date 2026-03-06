@@ -30,7 +30,7 @@ export function ScreenQuestionPaymentTypes({ onNext, onSaveExit, prefilled = fal
 
   return (
     <ScreenBusinessQuestionLayout
-      title="Payment Types"
+      title="Payment types"
       subtitle="What kind of payments will you make from this account? Select all that apply."
       onNext={() => onNext(selected)}
       onSaveExit={onSaveExit}

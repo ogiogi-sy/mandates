@@ -1,0 +1,1 @@
+When writing or reviewing any UI copy, ALWAYS read the file `../metro-bank-tov/SKILL.md` first and follow its tone of voice rules. Also read `../metro-bank-tov/references/copy-examples.md` for reference examples.

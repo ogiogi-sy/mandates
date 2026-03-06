@@ -102,7 +102,7 @@ export function ScreenCompanySearchOptimised({ onSelect }: ScreenCompanySearchOp
             
             {isInfoExpanded && (
               <div className="mt-3 text-text-secondary text-sm pl-7">
-                We'll fetch your company details from Companies House to save you time.
+                We'll get your company details from Companies House to save you time.
               </div>
             )}
           </div>

@@ -50,7 +50,7 @@ export function ScreenBusinessDetails({ onContinue }: ScreenBusinessDetailsProps
 
   return (
     <div className="space-y-6 pb-24 md:pb-0">
-      <p className="text-text-secondary">Just a few quick questions to help us serve you better.</p>
+      <p className="text-text-secondary">A few questions to help us set up your account.</p>
       <div className="space-y-4">
         <QuestionCard
           title="What's your annual turnover?"

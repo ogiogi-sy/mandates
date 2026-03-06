@@ -11,7 +11,7 @@ export function OnboardingWelcome({ onStart, onResume }: OnboardingWelcomeProps)
       {/* Header Content */}
       <div className="pt-8 pb-6">
         <h1 className="text-3xl font-bold text-brand-navy mb-3">
-          Open a Business Current Account
+          Open a business current account
         </h1>
         <p className="text-text-secondary leading-relaxed">
           Get started in minutes. You can pause and resume this application at any time.
@@ -59,7 +59,7 @@ export function OnboardingWelcome({ onStart, onResume }: OnboardingWelcomeProps)
             <div>
               <h3 className="font-semibold text-brand-navy text-sm">Proof of ID</h3>
               <p className="text-xs text-text-secondary mt-1 leading-relaxed">
-                Photo ID (Passport or Driving Licence) for all applicants
+                Photo ID (passport or driving licence) for all applicants
               </p>
             </div>
           </div>
@@ -83,7 +83,7 @@ export function OnboardingWelcome({ onStart, onResume }: OnboardingWelcomeProps)
               <Landmark className="text-brand-red" size={24} />
             </div>
             <div>
-              <h3 className="font-semibold text-brand-navy text-sm">Bank details (Optional)</h3>
+              <h3 className="font-semibold text-brand-navy text-sm">Bank details (optional)</h3>
               <p className="text-xs text-text-secondary mt-1 leading-relaxed">
                 Existing account info for faster checks
               </p>

@@ -57,7 +57,7 @@ export function ExampleFeature() {
   };
 
   const handlePrimaryAction = () => {
-    toast.success('Primary action completed!');
+    toast.success('Primary action completed');
     setIsSheetOpen(false);
   };
 
@@ -237,7 +237,7 @@ export function ExampleFeature() {
                 onClick={() => setActiveFilter('all')}
                 className="bg-brand-navy text-white py-3 px-6 rounded-full hover:opacity-90 transition-opacity"
               >
-                Clear Filters
+                Clear filters
               </button>
             </div>
           )}
@@ -322,7 +322,7 @@ export function ExampleFeature() {
                 onClick={handlePrimaryAction}
                 className="w-full bg-brand-navy text-white py-3 px-6 rounded-full hover:opacity-90 transition-opacity"
               >
-                Take Primary Action
+                Take primary action
               </button>
 
               {/* Secondary Action */}
@@ -330,7 +330,7 @@ export function ExampleFeature() {
                 onClick={() => toast.info('Secondary action clicked')}
                 className="w-full bg-brand-blue text-white py-2 px-4 rounded-xl hover:opacity-90 transition-opacity"
               >
-                Secondary Action
+                Secondary action
               </button>
 
               {/* Tertiary/Cancel */}

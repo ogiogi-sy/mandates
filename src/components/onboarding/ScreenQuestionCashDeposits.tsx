@@ -19,7 +19,7 @@ export function ScreenQuestionCashDeposits({ onNext, onSaveExit, prefilled = fal
 
   return (
     <ScreenBusinessQuestionLayout
-      title="Cash Deposits"
+      title="Cash deposits"
       subtitle="Will you be depositing cash into this account?"
       onNext={() => onNext(selected)}
       onSaveExit={onSaveExit}

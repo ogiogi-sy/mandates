@@ -15,7 +15,7 @@ export function ScreenQuestionTurnover({ onNext, onSaveExit, prefilled = false }
 
   return (
     <ScreenBusinessQuestionLayout
-      title="Annual Turnover"
+      title="Annual turnover"
       subtitle="What is your expected annual turnover for the next 12 months?"
       onNext={() => onNext(selected)}
       onSaveExit={onSaveExit}

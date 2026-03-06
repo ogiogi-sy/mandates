@@ -15,7 +15,7 @@ export function ScreenQuestionEmployees({ onNext, onSaveExit, prefilled = false 
 
   return (
     <ScreenBusinessQuestionLayout
-      title="Number of Employees"
+      title="Number of employees"
       subtitle="How many people does your business employ?"
       onNext={() => onNext(selected)}
       onSaveExit={onSaveExit}

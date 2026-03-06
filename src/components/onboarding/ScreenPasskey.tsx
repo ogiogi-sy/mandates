@@ -26,7 +26,7 @@ export function ScreenPasskey({ onCreated, onSkip }: ScreenPasskeyProps) {
            <Fingerprint className="text-brand-blue" size={48} />
         </div>
         <div>
-          <h3 className="text-xl font-bold text-brand-navy mb-2">Creating Passkey...</h3>
+          <h3 className="text-xl font-bold text-brand-navy mb-2">Creating passkey...</h3>
           <p className="text-text-secondary">Follow the instructions on your device</p>
         </div>
       </div>
@@ -40,7 +40,7 @@ export function ScreenPasskey({ onCreated, onSkip }: ScreenPasskeyProps) {
           <Check className="text-green-600" size={40} strokeWidth={3} />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-brand-navy mb-2">Passkey Created</h2>
+          <h2 className="text-2xl font-bold text-brand-navy mb-2">Passkey created</h2>
           <p className="text-text-secondary">You can now log in securely with Face ID or Touch ID.</p>
         </div>
         <StickyFooter>

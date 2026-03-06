@@ -70,7 +70,7 @@ export function ScreenStart({ onCompanySelect }: ScreenStartProps) {
 
           {/* Text Hierarchy */}
           <h1 className="text-xl md:text-3xl md:leading-tight font-bold text-white mb-1.5 md:mb-4 tracking-tight">
-            Open a Business Account
+            Open a business account
           </h1>
           <p className="text-blue-200/90 font-medium text-sm md:text-lg">
             Takes about 10 minutes

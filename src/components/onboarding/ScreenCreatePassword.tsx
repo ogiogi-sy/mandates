@@ -88,7 +88,7 @@ export function ScreenCreatePassword({ onContinue }: ScreenCreatePasswordProps) 
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-brand-navy mb-1.5">Confirm Password</label>
+          <label className="block text-sm font-bold text-brand-navy mb-1.5">Confirm password</label>
           <input 
             type={showPassword ? "text" : "password"}
             value={confirmPassword}
@@ -101,7 +101,7 @@ export function ScreenCreatePassword({ onContinue }: ScreenCreatePasswordProps) 
             placeholder="Re-enter password"
           />
           {confirmPassword && !passwordsMatch && (
-            <p className="text-red-500 text-xs mt-1 font-medium">Passwords do not match</p>
+            <p className="text-red-500 text-xs mt-1 font-medium">Your passwords don't match. Please try again.</p>
           )}
         </div>
       </div>

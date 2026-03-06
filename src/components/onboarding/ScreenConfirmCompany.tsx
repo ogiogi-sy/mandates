@@ -39,7 +39,7 @@ export function ScreenConfirmCompany({ company, onConfirm, onBack }: ScreenConfi
 
           <div>
             <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1">
-              Incorporated
+              Founded
             </label>
             <p className="text-brand-navy font-medium">
               {company.incorporationDate
@@ -60,7 +60,7 @@ export function ScreenConfirmCompany({ company, onConfirm, onBack }: ScreenConfi
       <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-[16px] border border-blue-100">
         <Info className="text-brand-blue shrink-0 mt-0.5" size={20} />
         <p className="text-sm text-brand-navy">
-          Information pulled from <span className="font-bold">Companies House</span>
+          Information from <span className="font-bold">Companies House</span>
         </p>
       </div>
 

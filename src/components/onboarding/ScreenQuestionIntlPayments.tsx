@@ -13,7 +13,7 @@ export function ScreenQuestionIntlPayments({ onNext, onSaveExit, prefilled = fal
 
   return (
     <ScreenBusinessQuestionLayout
-      title="International Payments"
+      title="International payments"
       subtitle="Does your business send or receive payments from outside the UK?"
       onNext={() => onNext(isYes!)}
       onSaveExit={onSaveExit}

@@ -31,7 +31,7 @@ export function ScreenQuestionRevenue({ onNext, onSaveExit }: ScreenQuestionReve
 
   return (
     <ScreenBusinessQuestionLayout
-      title="Revenue Sources"
+      title="Revenue sources"
       subtitle="Where does your business money come from? Select all that apply."
       onNext={() => onNext(selected)}
       onSaveExit={onSaveExit}

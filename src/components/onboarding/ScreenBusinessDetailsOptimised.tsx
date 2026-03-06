@@ -34,7 +34,7 @@ export function ScreenBusinessDetailsOptimised({ onContinue, prefilled = false }
         {/* Turnover */}
         <div className="space-y-2">
           <label className="text-sm font-bold text-text-secondary uppercase tracking-wider">
-            Annual Turnover
+            Annual turnover
           </label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary font-medium">£</span>
@@ -57,7 +57,7 @@ export function ScreenBusinessDetailsOptimised({ onContinue, prefilled = false }
         {/* Employees */}
         <div className="space-y-2">
           <label className="text-sm font-bold text-text-secondary uppercase tracking-wider">
-            Number of Employees
+            Number of employees
           </label>
           <select
              {...register("employees", { required: true })}
