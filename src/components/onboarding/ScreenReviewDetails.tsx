@@ -62,7 +62,7 @@ export function ScreenReviewDetails({ tradingName, tradingAddress, onContinue, o
           onClick={onContinue}
           className="w-full bg-primary text-primary-foreground h-12 rounded-full font-bold text-base hover:opacity-90 transition-all shadow-lg shadow-blue-900/10"
         >
-          Confirm & Continue
+          Confirm and continue
         </button>
       </StickyFooter>
     </div>

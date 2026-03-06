@@ -55,7 +55,7 @@ export function ScreenDirectorEdit({ director, onSave, onRemove }: ScreenDirecto
       <div className="space-y-5">
         {/* Name Input */}
         <div className="space-y-2">
-          <label className="text-sm font-bold text-text-secondary">Full Name</label>
+          <label className="text-sm font-bold text-text-secondary">Full name</label>
           <input
             type="text"
             value={name}
@@ -153,12 +153,12 @@ export function ScreenDirectorEdit({ director, onSave, onRemove }: ScreenDirecto
             disabled={!isValid}
             className={`
               w-full h-[48px] rounded-full font-bold text-[16px] transition-all
-              ${isValid 
-                ? 'bg-brand-navy text-white hover:opacity-90 shadow-md' 
+              ${isValid
+                ? 'bg-brand-navy text-white hover:opacity-90 shadow-md'
                 : 'bg-divider text-text-secondary cursor-not-allowed'}
             `}
           >
-            Save & Continue
+            Save and continue
           </button>
           
           <button

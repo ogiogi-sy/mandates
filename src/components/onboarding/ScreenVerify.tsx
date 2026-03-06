@@ -105,7 +105,7 @@ export function ScreenVerify({ email, onVerified, onResend, onChangeEmail }: Scr
           disabled={!isComplete}
           className="w-full bg-primary text-primary-foreground h-12 rounded-full font-bold text-base hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
-          Verify & Continue
+          Verify and continue
         </button>
       </StickyFooter>
     </div>

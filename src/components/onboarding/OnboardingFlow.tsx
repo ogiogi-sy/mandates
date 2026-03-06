@@ -171,7 +171,7 @@ export function OnboardingFlow() {
         "Business Activity",
         "Business Activity",
         "Business Activity",
-        "Review & Submit",   // 24
+        "Review and submit",   // 24
       ];
     }
     if (state.journeyType === 'ideal') {
@@ -191,7 +191,7 @@ export function OnboardingFlow() {
         "Review Application",// 13
       ];
     }
-    return ["Start", "About You", "Verify You", "Your Location", "About Your Business", "Connect Bank", "Review & Submit", "You're In"];
+    return ["Start", "About You", "Verify You", "Your Location", "About Your Business", "Connect Bank", "Review and submit", "You're in"];
   };
 
   const titles = getTitles();
@@ -1197,7 +1197,7 @@ export function OnboardingFlow() {
     if (state.step === 23) return <OnboardingLayout currentStep={23} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionCashDeposits onNext={(val) => updateBusinessDetails('cashDeposits', val)} onSaveExit={handleSaveExit} prefilled={isOBConnected} /></OnboardingLayout>;
 
     // Step 24: Review & Submit
-    if (state.step === 24) return <OnboardingLayout currentStep={24} totalSteps={progressTotal} title="Review & Submit" onSaveExit={handleSaveExit}><ScreenReviewOptimised state={state} onSubmit={() => setTimeout(() => nextStep(), 1500)} onEdit={goToStep} /></OnboardingLayout>;
+    if (state.step === 24) return <OnboardingLayout currentStep={24} totalSteps={progressTotal} title="Review and submit" onSaveExit={handleSaveExit}><ScreenReviewOptimised state={state} onSubmit={() => setTimeout(() => nextStep(), 1500)} onEdit={goToStep} /></OnboardingLayout>;
 
     // Step 25: Celebration
     if (state.step === 25) return (

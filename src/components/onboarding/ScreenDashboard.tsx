@@ -47,7 +47,7 @@ export function ScreenDashboard({
       iconBg: 'bg-green-400',
       iconShadow: 'shadow-green-400/30',
       icon: <Check className="text-[var(--brand-primary-navy)] w-5 h-5 stroke-[4px]" />,
-      heading: "You're all set!",
+      heading: "You're all set",
       subtitle: 'Your business account is now active and ready for use.',
       cardStatus: 'Under review',
       cardGradient: 'from-[var(--brand-red)] to-[#C4001A]',
@@ -56,8 +56,8 @@ export function ScreenDashboard({
       infoIconBg: 'bg-[var(--blue-50)] text-[var(--accent-primary)]',
       infoBorder: 'border-[var(--divider)]',
       infoTitle: 'What happens next?',
-      infoText: "Your application is now being reviewed by our team. We'll send you a notification as soon as the review is complete. In the meantime, head into the app and start exploring — there's plenty to discover!",
-      ctaLabel: 'Go to Dashboard',
+      infoText: "We're reviewing your application now. We'll notify you as soon as it's complete. In the meantime, feel free to explore the app.",
+      ctaLabel: 'Go to dashboard',
       ctaStyle: 'bg-[var(--brand-primary-navy)] text-white',
     },
     review: {
@@ -74,7 +74,7 @@ export function ScreenDashboard({
       infoIconBg: 'bg-[var(--amber-50)] text-[var(--amber-600)]',
       infoBorder: 'border-[var(--amber-500)]/20',
       infoTitle: 'Your application is being reviewed',
-      infoText: "Our team is reviewing your application and it can take up to 2 business days. We'll notify you as soon as the review is complete. In the meantime, feel free to explore the app and get familiar with your new account features.",
+      infoText: "We're reviewing your application — this can take up to 2 business days. We'll let you know as soon as it's done. You can explore the app while you wait.",
       ctaLabel: 'Explore the app',
       ctaStyle: 'bg-[var(--brand-primary-navy)] text-white',
     },
@@ -92,7 +92,7 @@ export function ScreenDashboard({
       infoIconBg: 'bg-[var(--red-50)] text-[var(--accent-danger)]',
       infoBorder: 'border-[var(--accent-danger)]/20',
       infoTitle: 'Why was my application declined?',
-      infoText: "After careful review, we're unable to proceed with your application as it doesn't meet our current account-opening criteria. This decision is based on our internal policies. If you believe this is an error, you can contact our support team for further information.",
+      infoText: "We've reviewed your application and we're not able to open an account right now. If you think something's not right, get in touch with our team and we'll look into it.",
       ctaLabel: 'Contact support',
       ctaStyle: 'bg-[var(--brand-primary-navy)] text-white',
     },
@@ -262,7 +262,7 @@ export function ScreenDashboard({
               <div className="flex-1">
                 <h3 className="text-[var(--text-primary)] mb-1" style={{ fontSize: '14px' }}>Need help?</h3>
                 <p className="text-[var(--text-secondary)]" style={{ fontSize: '12px', lineHeight: '18px', fontWeight: 400 }}>
-                  You can reach our business banking team at <span className="text-[var(--accent-primary)]" style={{ fontWeight: 600 }}>0345 08 08 500</span> or visit any Metro Bank store for an in-person consultation.
+                  You can reach our business banking team at <span className="text-[var(--accent-primary)]" style={{ fontWeight: 600 }}>0345 08 08 500</span> or visit any Metro Bank store to chat in person.
                 </p>
               </div>
             </div>
@@ -277,7 +277,7 @@ export function ScreenDashboard({
               <div className="flex-1">
                 <h3 className="text-[var(--text-primary)] mb-1" style={{ fontSize: '14px' }}>Mandate confirmed</h3>
                 <p className="text-[var(--text-secondary)]" style={{ fontSize: '12px', lineHeight: '18px', fontWeight: 400 }}>
-                  Your approval rules and authorised persons are set. Team members will complete verification asynchronously — you'll be notified as each person verifies.
+                  Your approval rules and team are set. We'll notify you as each team member verifies their identity.
                 </p>
               </div>
             </div>
@@ -478,7 +478,7 @@ function FullDashboard({
               <div className="flex-1 min-w-0">
                 <p className="text-[var(--text-primary)]" style={{ fontSize: '16px', fontWeight: 600 }}>Set up your team</p>
                 <p className="text-[var(--text-secondary)]" style={{ fontSize: '13px', fontWeight: 400 }}>
-                  Add directors and team members to your account.
+                  Add your directors and team members to get started.
                 </p>
               </div>
               <ChevronRight size={20} className="text-[var(--text-muted)] shrink-0" />
@@ -512,7 +512,7 @@ function FullDashboard({
                   </div>
                 </div>
                 <p className="text-[var(--text-muted)]" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
-                  A second verified director is needed to unlock dual-approval payments.
+                  You'll need a second verified director to unlock dual-approval payments.
                 </p>
               </div>
             )}
@@ -540,7 +540,7 @@ function FullDashboard({
             <div className="flex-1">
               <p className="text-[var(--emerald-600)]" style={{ fontSize: '13px', fontWeight: 600 }}>Your mandate is active</p>
               <p className="text-[var(--emerald-700)]" style={{ fontSize: '12px', fontWeight: 400 }}>
-                All authorised persons verified. Full payment access enabled.
+                Everyone's verified. You now have full payment access.
               </p>
             </div>
             {onDismissBanner && (
@@ -603,7 +603,7 @@ function FullDashboard({
                   </div>
                 </div>
                 <p className="text-[var(--text-muted)]" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
-                  Waiting for a second director to verify and accept the mandate before dual-approval payments are enabled.
+                  We're waiting for a second director to verify and accept the mandate before we can enable dual-approval payments.
                 </p>
               </div>
             )}

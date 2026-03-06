@@ -131,7 +131,7 @@ export function ReviewSubmit({ state, onSubmit, onBack, onEditStep }: ReviewSubm
             />
           </div>
           <div className="text-sm">
-            <span className="font-semibold text-brand-navy">I agree to the Terms & Conditions</span>
+            <span className="font-semibold text-brand-navy">I agree to the terms and conditions</span>
             <p className="text-text-secondary mt-1">
               By submitting this application, I confirm that the information provided is true and accurate. I understand that a credit check may be performed.
             </p>
@@ -157,7 +157,7 @@ export function ReviewSubmit({ state, onSubmit, onBack, onEditStep }: ReviewSubm
           }}
           className={`flex-1 py-3 px-6 rounded-full bg-brand-navy text-white font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-brand-navy/20 ${!agreed ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          Submit Application
+          Submit application
           <ChevronRight size={20} />
         </button>
       </div>

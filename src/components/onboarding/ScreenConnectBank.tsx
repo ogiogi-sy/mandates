@@ -27,7 +27,7 @@ export function ScreenConnectBank({ onConnect, onSkip }: ScreenConnectBankProps)
         <div className="space-y-6 pt-4">
           <div className="space-y-4">
             <FeatureRow text="Auto-fill business details" />
-            <FeatureRow text="Verify turnover & activity" />
+            <FeatureRow text="Verify turnover and activity" />
             <FeatureRow text="Instant identity check" />
           </div>
         </div>

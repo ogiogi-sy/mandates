@@ -67,7 +67,7 @@ export function ScreenReviewIdeal({ state, onSubmit, onEdit }: ScreenReviewIdeal
     },
     {
       id: 'people',
-      title: 'Directors & Shareholders',
+      title: 'Directors and shareholders',
       step: 4,
       content: (
         <div className="space-y-3">
@@ -246,7 +246,7 @@ export function ScreenReviewIdeal({ state, onSubmit, onEdit }: ScreenReviewIdeal
             <Check className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 transition-opacity" size={16} strokeWidth={3} />
           </div>
           <div className="text-sm text-text-secondary leading-relaxed">
-            I confirm that the information provided is accurate and I agree to the <a href="#" className="text-brand-blue font-bold hover:underline">Terms & Conditions</a> and <a href="#" className="text-brand-blue font-bold hover:underline">Privacy Policy</a>.
+            I confirm that the information provided is accurate and I agree to the <a href="#" className="text-brand-blue font-bold hover:underline">terms and conditions</a> and <a href="#" className="text-brand-blue font-bold hover:underline">Privacy Policy</a>.
           </div>
         </label>
       </div>
@@ -262,7 +262,7 @@ export function ScreenReviewIdeal({ state, onSubmit, onEdit }: ScreenReviewIdeal
               : 'bg-divider text-text-secondary cursor-not-allowed shadow-none'}
           `}
         >
-          Submit Application
+          Submit application
         </button>
       </StickyFooter>
     </div>

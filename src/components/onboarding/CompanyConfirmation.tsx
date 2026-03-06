@@ -91,7 +91,7 @@ export function CompanyConfirmation({ company, onConfirm, onBack }: CompanyConfi
           onClick={onConfirm}
           className="w-full bg-primary text-primary-foreground h-12 rounded-full font-bold text-base hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
         >
-          Confirm & Continue
+          Confirm and continue
           <ChevronRight size={20} />
         </button>
       </div>

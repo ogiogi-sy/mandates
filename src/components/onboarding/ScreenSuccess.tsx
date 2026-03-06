@@ -12,7 +12,7 @@ export function ScreenSuccess() {
         <p className="text-text-secondary font-medium">Most applications are approved within 2 hours.</p>
 
         <div className="w-full bg-white rounded-2xl p-6 border border-divider shadow-sm mt-8 text-left">
-          <p className="text-xs font-bold text-text-muted uppercase tracking-wide mb-1">Application Reference</p>
+          <p className="text-xs font-bold text-text-muted uppercase tracking-wide mb-1">Application reference</p>
           <p className="text-xl font-mono font-bold text-brand-navy mb-6">MB-8829-XJ4</p>
           
           <div className="space-y-3">

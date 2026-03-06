@@ -104,7 +104,7 @@ export function OnboardingWelcome({ onStart, onResume }: OnboardingWelcomeProps)
           onClick={onStart}
           className="w-full bg-primary text-primary-foreground h-12 rounded-full font-bold text-base hover:opacity-90 transition-opacity"
         >
-          Start Application
+          Start application
         </button>
         
         <button 

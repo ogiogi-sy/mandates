@@ -103,7 +103,7 @@ export function ScreenReview({ state, onSubmit, onEditStep }: ScreenReviewProps)
             className="sr-only"
           />
           <div className="text-sm">
-            <span className="font-bold text-brand-navy">I agree to the Terms & Conditions and Privacy Policy</span>
+            <span className="font-bold text-brand-navy">I agree to the terms and conditions and privacy policy</span>
           </div>
         </label>
       </div>

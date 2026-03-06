@@ -72,7 +72,7 @@ export function ScreenCreatePasskey({ onContinue, onFallback }: ScreenCreatePass
                <Zap className="text-brand-navy" size={20} />
              </div>
              <div>
-               <h4 className="font-bold text-brand-navy text-sm">Quick & easy process</h4>
+               <h4 className="font-bold text-brand-navy text-sm">Quick and easy process</h4>
                <p className="text-xs text-text-secondary">Log in in seconds</p>
              </div>
           </div>

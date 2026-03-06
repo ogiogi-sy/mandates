@@ -27,7 +27,7 @@ export function ScreenTermination({ termination, onPrimaryAction, onSecondaryAct
         };
       case 'risk_flag':
         return {
-          title: "Application Declined",
+          title: "Application declined",
           description: "Unfortunately, we are unable to offer you a business account at this time based on our internal risk assessment criteria.",
           primary: "Close application",
           secondary: "Learn more about eligibility"

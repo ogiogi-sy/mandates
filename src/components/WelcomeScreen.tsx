@@ -82,7 +82,7 @@ export function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
         {/* Info Card - Shows card pattern with left border */}
         <div className="bg-white rounded-2xl p-5 border-l-4 border-blue-300 shadow-[--shadow-card-sm] mt-6">
           <h3 className="font-semibold text-brand-blue mb-2">
-            👋 New to this project?
+            New to this project?
           </h3>
           <p className="text-sm text-text-secondary">
             Read the documentation in README.md to understand the design system and component patterns.

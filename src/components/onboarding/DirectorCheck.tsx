@@ -119,7 +119,7 @@ export function DirectorCheck({ directors: initialDirectors, onConfirm, onSaveEx
           onClick={onSaveExit}
           className="flex-1 py-3 px-6 rounded-full border border-brand-navy text-brand-navy font-semibold hover:bg-offwhite-50 transition-colors"
         >
-          Save & Exit
+          Save and exit
         </button>
         <button 
           onClick={() => onConfirm(directors)}

@@ -205,9 +205,9 @@ export function ScreenStart({ onCompanySelect }: ScreenStartProps) {
               <div className="mt-6 bg-emerald-50 rounded-[20px] p-3 border border-emerald-100 flex items-start gap-3">
                  <ShieldCheck className="text-emerald-600 mt-0.5 flex-shrink-0" size={18} />
                  <div>
-                   <h4 className="font-bold text-emerald-800 text-sm">Secure & Compliant</h4>
+                   <h4 className="font-bold text-emerald-800 text-sm">Your data is safe with us</h4>
                    <p className="text-xs text-emerald-700 mt-0.5 leading-snug">
-                     Your data is protected by bank-grade security and treated in accordance with UK regulations.
+                     We protect your information with bank-grade security, in line with UK regulations.
                    </p>
                  </div>
               </div>

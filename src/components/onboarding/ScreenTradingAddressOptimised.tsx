@@ -119,8 +119,8 @@ export function ScreenTradingAddressOptimised({ registeredAddress, onContinue }:
             let value = '';
             if (selectedType === 'registered') value = registeredAddress;
             if (selectedType === 'custom') value = customAddress;
-            if (selectedType === 'document') value = uploadedFile ? uploadedFile.name : 'Document Uploaded';
-            
+            if (selectedType === 'document') value = uploadedFile ? uploadedFile.name : 'Document uploaded';
+
             onContinue(selectedType, value);
           }}
           disabled={

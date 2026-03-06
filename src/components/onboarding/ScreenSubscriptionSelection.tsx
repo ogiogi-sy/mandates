@@ -177,7 +177,7 @@ export function ScreenSubscriptionSelection({
                       <div className="flex items-center gap-3 mb-1">
                         <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs text-white" style={{ backgroundColor: 'var(--brand-primary-navy)', fontWeight: 600 }}>1</div>
                         <h2 style={{ color: 'var(--text-primary)' }}>
-                          {currentPlan ? 'Manage Your Plan' : 'Choose Your Plan'}
+                          {currentPlan ? 'Manage your plan' : 'Choose your plan'}
                         </h2>
                       </div>
                       <p className="text-xs mt-2 ml-8" style={{ color: 'var(--text-muted)' }}>You can change or cancel anytime</p>
@@ -773,7 +773,7 @@ export function ScreenSubscriptionSelection({
                       <div className="space-y-2.5">
                         <p className="text-[11px]" style={{ fontWeight: 600, letterSpacing: '0.02em', color: 'var(--text-muted)' }}>Please confirm to continue:</p>
                         {[
-                          { key: 'terms' as const, label: 'I agree to the Terms & Conditions' },
+                          { key: 'terms' as const, label: 'I agree to the terms and conditions' },
                           { key: 'billing' as const, label: 'I consent to recurring monthly billing' },
                           { key: 'cancellation' as const, label: 'I can cancel anytime with no exit fees' },
                         ].map(item => (
@@ -823,7 +823,7 @@ export function ScreenSubscriptionSelection({
                         ) : (
                           <>
                             <ShieldCheck size={18} />
-                            <span style={{ fontWeight: 600 }}>Agree & Confirm</span>
+                            <span style={{ fontWeight: 600 }}>Agree and confirm</span>
                           </>
                         )}
                       </motion.button>
@@ -843,7 +843,7 @@ export function ScreenSubscriptionSelection({
                         whileHover={!isConfirming ? 'hover' : 'initial'}
                         whileTap={!isConfirming ? 'tap' : 'initial'}
                       >
-                        Go back & edit
+                        Go back and edit
                       </motion.button>
                     </div>
                   </motion.div>

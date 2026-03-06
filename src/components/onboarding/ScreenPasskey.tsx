@@ -104,7 +104,7 @@ export function ScreenPasskey({ onCreated, onSkip }: ScreenPasskeyProps) {
           onClick={handleCreate}
           className="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-opacity"
         >
-          Create Passkey
+          Create passkey
         </button>
 
         <button

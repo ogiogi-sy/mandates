@@ -16,7 +16,7 @@ export function ScreenWelcomeOptimised({ onStart, onResume }: ScreenWelcomeOptim
           <span className="text-brand-blue">simplified.</span>
         </h1>
         <p className="text-text-secondary leading-relaxed text-base">
-          Open your account in minutes. No paperwork, just a streamlined digital flow.
+          Open your account in minutes. No paperwork — we'll guide you through it.
         </p>
       </div>
 
@@ -33,14 +33,14 @@ export function ScreenWelcomeOptimised({ onStart, onResume }: ScreenWelcomeOptim
           <ListCard 
             icon={<ShieldCheck size={24} className="text-[#6366F1]" />}
             iconBg="bg-[#EEF2FF]"
-            title="Director & ID"
+            title="Director and ID"
             subtitle="Passport or UK Driving Licence"
           />
           <ListCard 
             icon={<Clock size={24} className="text-[#F97316]" />}
             iconBg="bg-[#FFF7ED]"
             title="5 minutes"
-            subtitle="To complete the application"
+            subtitle="To complete your application"
           />
         </div>
       </div>
@@ -60,7 +60,7 @@ export function ScreenWelcomeOptimised({ onStart, onResume }: ScreenWelcomeOptim
             onClick={onStart}
             className="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-all flex items-center justify-center gap-2 group shadow-lg shadow-brand-navy/20"
           >
-            Start Application
+            Start application
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </button>
 

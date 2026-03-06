@@ -250,16 +250,16 @@ export function ExampleFeature() {
         */}
         <div className="bg-white rounded-2xl p-5 border-l-4 border-blue-300 shadow-[--shadow-card-sm]">
           <h3 className="font-semibold text-brand-blue mb-2">
-            💡 Using This Template
+            Using this template
           </h3>
           <p className="text-sm text-text-secondary mb-3">
             This component demonstrates all key patterns. Copy what you need and customize for your feature.
           </p>
-          <button 
+          <button
             onClick={() => toast.info('Check out /COMPONENT_PATTERNS.md for more examples')}
             className="text-sm text-brand-blue font-medium"
           >
-            View Documentation →
+            View documentation
           </button>
         </div>
       </div>

@@ -112,7 +112,7 @@ export function ScreenCreatePassword({ onContinue }: ScreenCreatePasswordProps) 
           disabled={!canContinue}
           className="w-full bg-primary text-primary-foreground h-12 rounded-full font-bold text-base hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-900/10"
         >
-          Create Password
+          Create password
         </button>
       </StickyFooter>
     </div>

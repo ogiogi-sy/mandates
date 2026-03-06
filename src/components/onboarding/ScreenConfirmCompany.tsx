@@ -25,14 +25,14 @@ export function ScreenConfirmCompany({ company, onConfirm, onBack }: ScreenConfi
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1">
-              Company Number
+              Company number
             </label>
             <p className="text-brand-navy font-medium font-mono">{company.number}</p>
           </div>
           
           <div>
             <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1">
-              Registered Address
+              Registered address
             </label>
             <p className="text-brand-navy font-medium">{company.address}</p>
           </div>
@@ -50,7 +50,7 @@ export function ScreenConfirmCompany({ company, onConfirm, onBack }: ScreenConfi
 
           <div>
             <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1">
-              Company Type
+              Company type
             </label>
             <p className="text-brand-navy font-medium">Private Limited Company</p>
           </div>
@@ -70,7 +70,7 @@ export function ScreenConfirmCompany({ company, onConfirm, onBack }: ScreenConfi
             onClick={onConfirm}
             className="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-opacity"
           >
-            Confirm & Continue
+            Confirm and continue
           </button>
 
           <button

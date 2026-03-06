@@ -212,11 +212,11 @@ export function ScreenDirectorsList({ directors, onAdd, onContinue }: ScreenDire
                 /* Collapsed Action Area */
                 <div className="px-5 pb-5">
                    {!dataEntered ? (
-                     <button 
+                     <button
                        onClick={() => setExpandedId(director.id)}
                        className="w-full py-3 bg-blue-50 text-brand-blue rounded-[12px] font-bold text-sm hover:bg-blue-100 transition-colors"
                      >
-                       Choose & add details
+                       Choose and add details
                      </button>
                    ) : (
                      <div className="flex items-center gap-2 text-sm text-text-secondary pl-1">
