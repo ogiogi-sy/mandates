@@ -143,7 +143,7 @@ export function ScreenApprovalRule({ onContinue, defaultThreshold = 5000, isSole
       {/* Header */}
       <div className="space-y-2">
         <h2 className="text-[var(--text-primary)]">How should payments be approved?</h2>
-        <p>Choose a starting rule. You can adjust this later in the app.</p>
+        <p className="text-[var(--text-secondary)]">Choose a starting rule. You can adjust this later in the app.</p>
       </div>
 
       {/* Selection Cards */}

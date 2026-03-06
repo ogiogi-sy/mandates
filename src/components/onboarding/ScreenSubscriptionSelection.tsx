@@ -328,7 +328,7 @@ export function ScreenSubscriptionSelection({
                                     <span>Selecting...</span>
                                   </>
                                 ) : isCurrent ? (
-                                  <span>Current Plan</span>
+                                  <span>Current plan</span>
                                 ) : (
                                   <span>Choose {plan.name}</span>
                                 )}

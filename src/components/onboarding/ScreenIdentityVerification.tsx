@@ -104,7 +104,7 @@ export function ScreenIdentityVerification({ onVerified, firstName }: ScreenIden
               <Smartphone className="text-brand-navy group-hover:text-brand-blue transition-colors" size={24} />
             </div>
             <div>
-              <h3 className="font-bold text-brand-navy">Driving Licence</h3>
+              <h3 className="font-bold text-brand-navy">Driving licence</h3>
               <p className="text-text-secondary text-sm">Scan the front of your card</p>
             </div>
           </div>

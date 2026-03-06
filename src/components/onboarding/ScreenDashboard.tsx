@@ -439,7 +439,7 @@ function FullDashboard({
                   Your first 3 months are on us
                 </h3>
                 <p className="text-white/70 mb-4" style={{ fontSize: '13px', lineHeight: '19px', fontWeight: 400 }}>
-                  Enjoy full access to all features at no cost. After your trial, choose from 4 plans starting at just £9/mo to keep your account running.
+                  Full access to all features at no cost. After your trial, choose from 4 plans starting at £9/mo.
                 </p>
 
                 {/* CTA row */}

@@ -303,7 +303,7 @@ export function ScreenAddTeamMember({
         <div className="flex items-start gap-1.5 p-2 bg-[var(--amber-50)] border border-[var(--amber-500)]/20 rounded-[var(--radius-sm)]">
           <AlertCircle size={12} className="text-[var(--amber-600)] mt-0.5 shrink-0" />
           <span className="text-[var(--amber-600)]" style={{ fontSize: '11px', lineHeight: '14px', fontWeight: 500 }}>
-            Unlimited access for non-directors requires director confirmation
+            Unlimited access for non-directors needs director confirmation
           </span>
         </div>
       )}
@@ -444,7 +444,7 @@ export function ScreenAddTeamMember({
             >
               <Info size={14} className="text-[var(--amber-600)] mt-0.5 shrink-0" />
               <span className="text-[var(--amber-600)]" style={{ fontSize: '13px', lineHeight: '16px', fontWeight: 400 }}>
-                This person will need to verify their identity
+                They'll need to verify their identity
               </span>
             </motion.div>
           )}

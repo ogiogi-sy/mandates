@@ -98,7 +98,7 @@ export function ScreenAuthorityConfirmation({ companyName, directorCount, onCont
       {/* Header */}
       <div className="space-y-2">
         <h2 className="text-[var(--text-primary)]">Who's authorised to manage this account?</h2>
-        <p>
+        <p className="text-[var(--text-secondary)]">
           We've found {directorCount} director{directorCount !== 1 ? 's' : ''} for {companyName}.
           Let us know how your business manages account access.
         </p>
