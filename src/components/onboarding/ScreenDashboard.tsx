@@ -13,6 +13,8 @@ interface ScreenDashboardProps {
   mandate?: MandateState;
   onGoToDashboard?: () => void;
   onSetupTeam?: () => void;
+  onSetupPaymentRules?: () => void;
+  onSetupPaymentPermissions?: () => void;
   onDismissBanner?: () => void;
   onViewTeamStatus?: () => void;
 }
@@ -23,6 +25,8 @@ export function ScreenDashboard({
   mandate,
   onGoToDashboard,
   onSetupTeam,
+  onSetupPaymentRules,
+  onSetupPaymentPermissions,
   onDismissBanner,
   onViewTeamStatus,
 }: ScreenDashboardProps) {
@@ -32,6 +36,8 @@ export function ScreenDashboard({
       companyName={companyName}
       mandate={mandate}
       onSetupTeam={onSetupTeam}
+      onSetupPaymentRules={onSetupPaymentRules}
+      onSetupPaymentPermissions={onSetupPaymentPermissions}
       onDismissBanner={onDismissBanner}
       onViewTeamStatus={onViewTeamStatus}
     />;
@@ -39,7 +45,7 @@ export function ScreenDashboard({
 
   // CELEBRATION MODE
   const [simOutcome, setSimOutcome] = useState<'success' | 'review' | 'declined'>('success');
-  const isMultiDirector = mandate?.authorityType === 'multi_director' || mandate?.authorityType === 'board_authorised';
+  const isMultiDirector = mandate?.authorityType === 'multi_director';
 
   const outcomeConfig = {
     success: {
@@ -306,12 +312,16 @@ function FullDashboard({
   companyName,
   mandate,
   onSetupTeam,
+  onSetupPaymentRules,
+  onSetupPaymentPermissions,
   onDismissBanner,
   onViewTeamStatus,
 }: {
   companyName: string;
   mandate?: MandateState;
   onSetupTeam?: () => void;
+  onSetupPaymentRules?: () => void;
+  onSetupPaymentPermissions?: () => void;
   onDismissBanner?: () => void;
   onViewTeamStatus?: () => void;
 }) {
@@ -319,7 +329,7 @@ function FullDashboard({
   const [showFreeBanner, setShowFreeBanner] = useState(true);
   const [showPlansPreview, setShowPlansPreview] = useState(false);
   const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
-  const isMultiDirector = mandate?.authorityType === 'multi_director' || mandate?.authorityType === 'board_authorised';
+  const isMultiDirector = mandate?.authorityType === 'multi_director';
   const isMandateConfirmed = mandate?.confirmed;
   const allVerified = mandate?.teamMembers.every(m => m.status === 'verified') ?? false;
   const verifiedCount = mandate?.teamMembers.filter(m => m.status === 'verified').length ?? 0;
@@ -527,6 +537,50 @@ function FullDashboard({
               </div>
             )}
           </>
+        )}
+
+        {/* Payment rules activation card — multi-director with no approval rule set */}
+        {isMultiDirector && !mandate?.approvalRule && (
+          <motion.button
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            onClick={onSetupPaymentRules}
+            className="w-full bg-[var(--background-surface)] rounded-[var(--radius-lg)] border border-[var(--accent-primary)]/20 shadow-[var(--shadow-card-md)] p-4 flex items-center gap-4 text-left hover:border-[var(--accent-primary)] transition-all"
+          >
+            <div className="w-12 h-12 rounded-full bg-[var(--blue-50)] text-[var(--accent-primary)] flex items-center justify-center shrink-0 relative">
+              <ShieldCheck size={22} />
+              <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-[var(--accent-danger)] rounded-full border-2 border-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[var(--text-primary)]" style={{ fontSize: '16px', fontWeight: 600 }}>Set up payment rules</p>
+              <p className="text-[var(--text-secondary)]" style={{ fontSize: '13px', fontWeight: 400 }}>
+                Choose how payments are approved by your team.
+              </p>
+            </div>
+            <ChevronRight size={20} className="text-[var(--text-muted)] shrink-0" />
+          </motion.button>
+        )}
+
+        {/* Payment permissions activation card — configure per-user payment access */}
+        {isMultiDirector && !isMandateConfirmed && (
+          <motion.button
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            onClick={onSetupPaymentPermissions}
+            className="w-full bg-[var(--background-surface)] rounded-[var(--radius-lg)] border border-[var(--accent-primary)]/20 shadow-[var(--shadow-card-md)] p-4 flex items-center gap-4 text-left hover:border-[var(--accent-primary)] transition-all"
+          >
+            <div className="w-12 h-12 rounded-full bg-[var(--blue-50)] text-[var(--accent-primary)] flex items-center justify-center shrink-0 relative">
+              <Users size={22} />
+              <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-[var(--accent-danger)] rounded-full border-2 border-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[var(--text-primary)]" style={{ fontSize: '16px', fontWeight: 600 }}>Set up payment permissions</p>
+              <p className="text-[var(--text-secondary)]" style={{ fontSize: '13px', fontWeight: 400 }}>
+                Configure who can make and approve payments.
+              </p>
+            </div>
+            <ChevronRight size={20} className="text-[var(--text-muted)] shrink-0" />
+          </motion.button>
         )}
 
         {/* State 1: Mandate confirmed, all verified — green banner */}

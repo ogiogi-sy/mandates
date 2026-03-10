@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, CheckCheck, SplitSquareHorizontal, AlertCircle } from 'lucide-react';
+import { Check, CheckCheck, SplitSquareHorizontal, AlertCircle, AlertTriangle, ChevronLeft } from 'lucide-react';
 import { StickyFooter } from './StickyFooter';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -9,17 +9,41 @@ interface ScreenApprovalRuleProps {
   defaultThreshold?: number;
   /** If true, sole director — dual-approval options are disabled */
   isSoleDirector?: boolean;
+  /** Total directors on the mandate (including the primary). Used for insufficient directors warning. */
+  directorCount?: number;
+  /** Pre-populate selection when navigating back */
+  initialRule?: 'any_one' | 'two_required' | 'threshold' | null;
+  /** Pre-populate threshold (in pence) when navigating back */
+  initialThresholdAmount?: number | null;
+  /** Display context — dashboard wraps with its own header */
+  context?: 'flow' | 'dashboard';
+  /** Back handler for dashboard context */
+  onBack?: () => void;
 }
 
 const THRESHOLD_OPTIONS = [1000, 5000, 10000, 25000];
 const THRESHOLD_MIN = 500;
 const THRESHOLD_MAX = 1_000_000;
 
-export function ScreenApprovalRule({ onContinue, defaultThreshold = 5000, isSoleDirector = false }: ScreenApprovalRuleProps) {
-  const [selected, setSelected] = useState<'any_one' | 'two_required' | 'threshold' | null>(null);
-  const [thresholdChip, setThresholdChip] = useState<number | 'custom'>(defaultThreshold);
-  const [customAmount, setCustomAmount] = useState('');
-  const [showCustom, setShowCustom] = useState(false);
+export function ScreenApprovalRule({ onContinue, defaultThreshold = 5000, isSoleDirector = false, directorCount, initialRule, initialThresholdAmount, context = 'flow', onBack }: ScreenApprovalRuleProps) {
+  // Restore previous selection when navigating back
+  const resolvedInitialThreshold = initialThresholdAmount != null ? initialThresholdAmount / 100 : null;
+  const isPresetThreshold = resolvedInitialThreshold != null && THRESHOLD_OPTIONS.includes(resolvedInitialThreshold);
+
+  const [selected, setSelected] = useState<'any_one' | 'two_required' | 'threshold' | null>(initialRule ?? null);
+  const [thresholdChip, setThresholdChip] = useState<number | 'custom'>(
+    initialRule === 'threshold' && resolvedInitialThreshold != null
+      ? (isPresetThreshold ? resolvedInitialThreshold : 'custom')
+      : defaultThreshold
+  );
+  const [customAmount, setCustomAmount] = useState(
+    initialRule === 'threshold' && resolvedInitialThreshold != null && !isPresetThreshold
+      ? resolvedInitialThreshold.toString()
+      : ''
+  );
+  const [showCustom, setShowCustom] = useState(
+    initialRule === 'threshold' && resolvedInitialThreshold != null && !isPresetThreshold
+  );
   const [customError, setCustomError] = useState<string | null>(null);
   const [showValidationError, setShowValidationError] = useState(false);
 
@@ -138,14 +162,8 @@ export function ScreenApprovalRule({ onContinue, defaultThreshold = 5000, isSole
     },
   ];
 
-  return (
-    <div className="space-y-6 pb-4">
-      {/* Header */}
-      <div className="space-y-2">
-        <h2 className="text-[var(--text-primary)]">How should payments be approved?</h2>
-        <p className="text-[var(--text-secondary)]">Choose a starting rule. You can adjust this later in the app.</p>
-      </div>
-
+  const renderCards = () => (
+    <>
       {/* Selection Cards */}
       <div className="space-y-3">
         {cards.map((card) => {
@@ -303,6 +321,30 @@ export function ScreenApprovalRule({ onContinue, defaultThreshold = 5000, isSole
         )}
       </AnimatePresence>
 
+      {/* Insufficient directors warning */}
+      <AnimatePresence>
+        {(selected === 'two_required' || selected === 'threshold') && directorCount !== undefined && directorCount <= 2 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="bg-[var(--amber-50)] border border-[var(--amber-500)]/20 rounded-[var(--radius-md)] p-3 flex items-start gap-3">
+              <AlertTriangle size={16} className="text-[var(--amber-600)] mt-0.5 shrink-0" />
+              <div>
+                <p className="text-[var(--amber-600)]" style={{ fontSize: '13px', fontWeight: 600 }}>
+                  You only have {directorCount} directors on this account
+                </p>
+                <p className="text-[var(--text-secondary)] mt-0.5" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
+                  Dual approval requires two available directors. If one is unavailable, payments needing two approvals will be blocked. Consider adding another director.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Reassurance */}
       <p className="text-center text-[var(--text-muted)]" style={{ fontSize: '13px', lineHeight: '16px', fontWeight: 400 }}>
         You can change your approval rules anytime in the app.
@@ -319,9 +361,42 @@ export function ScreenApprovalRule({ onContinue, defaultThreshold = 5000, isSole
               : 'bg-[var(--divider)] text-[var(--text-muted)] cursor-not-allowed'}
           `}
         >
-          Continue
+          {context === 'dashboard' ? 'Save payment rules' : 'Continue'}
         </button>
       </StickyFooter>
+    </>
+  );
+
+  if (context === 'dashboard') {
+    return (
+      <div className="min-h-screen bg-[var(--background-app)] flex flex-col" style={{ fontFamily: 'var(--font-family)' }}>
+        <div className="sticky top-0 z-30 flex items-center gap-[var(--space-md)] p-[var(--space-lg)] border-b border-[var(--divider)] bg-[var(--background-surface)]">
+          <button type="button" onClick={onBack} className="w-10 h-10 flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--background-surface-soft)] rounded-full transition-colors" aria-label="Go back">
+            <ChevronLeft size={24} />
+          </button>
+          <h3 className="text-[var(--text-primary)]">Set up payment rules</h3>
+        </div>
+        <div className="flex-1 p-[var(--space-xl)]">
+          <div className="space-y-6 pb-4">
+            <div className="space-y-2">
+              <h2 className="text-[var(--text-primary)]">How should payments be approved?</h2>
+              <p className="text-[var(--text-secondary)]">Choose a rule for how payments are approved. You can change this anytime.</p>
+            </div>
+            {renderCards()}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 pb-4">
+      {/* Header */}
+      <div className="space-y-2">
+        <h2 className="text-[var(--text-primary)]">How should payments be approved?</h2>
+        <p className="text-[var(--text-secondary)]">Choose a starting rule. You can adjust this later in the app.</p>
+      </div>
+      {renderCards()}
     </div>
   );
 }

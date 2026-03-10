@@ -64,7 +64,7 @@ export interface OnboardingState {
   
   termination?: TerminationState;
   mandate: MandateState;
-  dashboardView: 'main' | 'team' | 'add-member' | 'mandate-summary' | 'mandate-success';
+  dashboardView: 'main' | 'team' | 'add-member' | 'mandate-summary' | 'mandate-success' | 'approval-rules';
   editingMemberId?: string | null;
 }
 
@@ -143,7 +143,7 @@ export interface MandateAuditEntry {
 }
 
 export interface MandateState {
-  authorityType: 'sole_director' | 'multi_director' | 'board_authorised' | null;
+  authorityType: 'sole_director' | 'multi_director' | null;
   boardResolutionUploaded: boolean;
   approvalRule: 'any_one' | 'two_required' | 'threshold' | null;
   /** Stored in pence (minor currency) — divide by 100 for display */

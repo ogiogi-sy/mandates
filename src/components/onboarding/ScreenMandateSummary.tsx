@@ -620,8 +620,10 @@ export function ScreenMandateSummary({
   const renderPermissionsMatrix = () => {
     const permCols: { key: keyof TeamMember['permissions']; label: string; icon: React.ReactNode }[] = [
       { key: 'viewAccount', label: 'View', icon: <Eye size={12} /> },
-      { key: 'initiatePayments', label: 'Initiate', icon: <CreditCard size={12} /> },
-      { key: 'approvePayments', label: 'Approve', icon: <UserCheck size={12} /> },
+      ...(context !== 'flow' ? [
+        { key: 'initiatePayments' as const, label: 'Initiate', icon: <CreditCard size={12} /> },
+        { key: 'approvePayments' as const, label: 'Approve', icon: <UserCheck size={12} /> },
+      ] : []),
       { key: 'manageTeam', label: 'Manage', icon: <Users size={12} /> },
     ];
     const isOpen = expandedSections.permissions;
@@ -633,7 +635,7 @@ export function ScreenMandateSummary({
           onClick={() => toggleSection('permissions')}
           className="w-full flex items-center justify-between mb-[var(--space-sm)] ml-0.5 min-h-[44px]"
         >
-          <SectionLabel>Team and permissions</SectionLabel>
+          <SectionLabel>{context === 'flow' ? 'Team and account access' : 'Team and permissions'}</SectionLabel>
           <ChevronDown size={16} className={`text-[var(--text-muted)] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
         <AnimatePresence initial={false}>
@@ -667,8 +669,8 @@ export function ScreenMandateSummary({
                       </p>
                       <p className="text-[var(--text-muted)]" style={{ fontSize: '11px', fontWeight: 400 }}>
                         {getRoleLabel(person.role)}
-                        {person.initiationLimit ? ` · Init ${formatCurrency(person.initiationLimit)}` : ''}
-                        {person.approvalLimit ? ` · Appr ${formatCurrency(person.approvalLimit)}` : ''}
+                        {context !== 'flow' && person.initiationLimit ? ` · Init ${formatCurrency(person.initiationLimit)}` : ''}
+                        {context !== 'flow' && person.approvalLimit ? ` · Appr ${formatCurrency(person.approvalLimit)}` : ''}
                       </p>
                     </div>
                     <StatusBadge status={person.status === 'verified' ? 'verified' : 'pending'} />
@@ -909,7 +911,7 @@ export function ScreenMandateSummary({
         </div>
       </div>
       <span className="text-[var(--text-secondary)]" style={{ fontSize: '13px', lineHeight: '18px', fontWeight: 400 }}>
-        I confirm the people, approval rules, and controls for this account are correct.
+        I confirm the people and permissions for this account are correct, and I'm authorised to set up access on behalf of the business.
       </span>
     </label>
   );
@@ -1215,15 +1217,16 @@ export function ScreenMandateSummary({
   /* ─────────────────────────────────────────────────
    * ASSEMBLED CONTENT
    * ───────────────────────────────────────────────── */
-  const summaryContent = (
+  const summaryContent = (isFlowContext: boolean) => (
     <div className="space-y-[var(--space-xl)]">
-      {renderRulesSection()}
-      {renderSimulator()}
-      {renderApprovalFlow()}
+      {/* Payment rules, simulator, approval flow — only shown in dashboard context */}
+      {!isFlowContext && renderRulesSection()}
+      {!isFlowContext && renderSimulator()}
+      {!isFlowContext && renderApprovalFlow()}
       {renderPermissionsMatrix()}
       {renderActivationChecklist()}
       {renderPendingSection()}
-      {renderGovernanceSummary()}
+      {!isFlowContext && renderGovernanceSummary()}
       {renderDeclaration()}
       {renderSignaturePad()}
     </div>
@@ -1234,8 +1237,8 @@ export function ScreenMandateSummary({
     return (
       <div className="space-y-[var(--space-xl)]" style={{ fontFamily: 'var(--font-family)' }}>
         <div className="space-y-2">
-          <h2 className="text-[var(--text-primary)]">Account summary</h2>
-          <p className="text-[var(--text-secondary)]">Review your approval rules, team permissions, and mandate activation status.</p>
+          <h2 className="text-[var(--text-primary)]">Review account access</h2>
+          <p className="text-[var(--text-secondary)]">Check who has access to this account, their permissions, and confirm the mandate.</p>
           {mandate.mandateVersion && (
             <p className="text-[var(--text-muted)]" style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.02em' }}>
               Mandate ref: {mandate.mandateVersion}
@@ -1243,7 +1246,7 @@ export function ScreenMandateSummary({
           )}
         </div>
 
-        {summaryContent}
+        {summaryContent(true)}
 
         <StickyFooter>
           {confirmButton}
@@ -1270,7 +1273,7 @@ export function ScreenMandateSummary({
       </div>
 
       <div className="flex-1 p-[var(--space-xl)]">
-        {summaryContent}
+        {summaryContent(false)}
       </div>
 
       <div className="sticky bottom-0 z-20 bg-[var(--background-app)] border-t border-[var(--divider)] p-[var(--space-xl)] pb-[var(--space-xxl)]">

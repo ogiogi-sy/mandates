@@ -23,6 +23,8 @@ interface ScreenTeamMembersProps {
   onSimulateVerifyFailed?: (memberId: string) => void;
 }
 
+const MAX_TEAM_MEMBERS = 15;
+
 export function ScreenTeamMembers({
   applicantName,
   teamMembers,
@@ -42,6 +44,9 @@ export function ScreenTeamMembers({
 }: ScreenTeamMembersProps) {
   const hasVerifiedMember = teamMembers.some(m => m.status === 'verified');
   const hasAnyInvited = teamMembers.some(m => m.status !== 'not_invited');
+  // +1 for the primary account holder (not in teamMembers array)
+  const totalMemberCount = teamMembers.length + 1;
+  const isAtCapacity = totalMemberCount >= MAX_TEAM_MEMBERS;
   const [activeTab, setActiveTab] = useState<'team' | 'activity'>('team');
   const [expandedTimeline, setExpandedTimeline] = useState<string | null>(null);
 
@@ -171,8 +176,8 @@ export function ScreenTeamMembers({
         <div className="space-y-[var(--space-lg)]" style={{ fontFamily: 'var(--font-family)' }}>
           {/* Header */}
           <div className="space-y-2">
-            <h2 className="text-[var(--text-primary)]">Set up your team</h2>
-            <p className="text-[var(--text-secondary)]">Invite directors and team members who need access to this account.</p>
+            <h2 className="text-[var(--text-primary)]">Who needs account access?</h2>
+            <p className="text-[var(--text-secondary)]">Add directors and team members who need to access and manage this account.</p>
           </div>
 
           {/* Primary user card (Sophie) */}
@@ -331,23 +336,28 @@ export function ScreenTeamMembers({
                           <UserX size={12} />
                           Revoke
                         </button>
-                        <button
-                          onClick={() => onSimulateVerify(member.id)}
-                          className="flex items-center gap-1.5 px-3 py-2 text-[var(--emerald-600)] border border-[var(--emerald-600)]/30 rounded-[var(--radius-pill)] hover:bg-[var(--emerald-50)] transition-colors"
-                          style={{ fontSize: '13px', fontWeight: 600 }}
-                        >
-                          <Shield size={12} />
-                          Simulate verify
-                        </button>
-                        {onSimulateVerifyFailed && (
-                          <button
-                            onClick={() => onSimulateVerifyFailed(member.id)}
-                            className="flex items-center gap-1.5 px-3 py-2 text-[var(--accent-danger)] border border-[var(--accent-danger)]/30 rounded-[var(--radius-pill)] hover:bg-[var(--red-50)] transition-colors"
-                            style={{ fontSize: '13px', fontWeight: 600 }}
-                          >
-                            <XCircle size={12} />
-                            Simulate fail
-                          </button>
+                        {/* Dev-only simulation buttons */}
+                        {import.meta.env.DEV && (
+                          <>
+                            <button
+                              onClick={() => onSimulateVerify(member.id)}
+                              className="flex items-center gap-1.5 px-3 py-2 text-[var(--emerald-600)] border border-[var(--emerald-600)]/30 rounded-[var(--radius-pill)] hover:bg-[var(--emerald-50)] transition-colors"
+                              style={{ fontSize: '13px', fontWeight: 600 }}
+                            >
+                              <Shield size={12} />
+                              Simulate verify
+                            </button>
+                            {onSimulateVerifyFailed && (
+                              <button
+                                onClick={() => onSimulateVerifyFailed(member.id)}
+                                className="flex items-center gap-1.5 px-3 py-2 text-[var(--accent-danger)] border border-[var(--accent-danger)]/30 rounded-[var(--radius-pill)] hover:bg-[var(--red-50)] transition-colors"
+                                style={{ fontSize: '13px', fontWeight: 600 }}
+                              >
+                                <XCircle size={12} />
+                                Simulate fail
+                              </button>
+                            )}
+                          </>
                         )}
                       </>
                     )}
@@ -397,14 +407,24 @@ export function ScreenTeamMembers({
             </div>
           ))}
 
+          {/* Team capacity indicator */}
+          <p className="text-center text-[var(--text-muted)]" style={{ fontSize: '12px', fontWeight: 500 }}>
+            {totalMemberCount} of {MAX_TEAM_MEMBERS} team slots used
+          </p>
+
           {/* Add another person CTA */}
           <button
             onClick={onAddNewMember}
-            className="w-full py-4 flex items-center justify-center gap-2 rounded-[var(--radius-pill)] border border-[var(--brand-primary-navy)] text-[var(--brand-primary-navy)] hover:bg-[var(--background-surface-soft)] transition-all"
+            disabled={isAtCapacity}
+            className={`w-full py-4 flex items-center justify-center gap-2 rounded-[var(--radius-pill)] border transition-all ${
+              isAtCapacity
+                ? 'border-[var(--divider)] text-[var(--text-muted)] cursor-not-allowed'
+                : 'border-[var(--brand-primary-navy)] text-[var(--brand-primary-navy)] hover:bg-[var(--background-surface-soft)]'
+            }`}
             style={{ fontSize: '16px', fontWeight: 600 }}
           >
             <Plus size={20} />
-            Add another person
+            {isAtCapacity ? 'Team is full' : 'Add another person'}
           </button>
 
           {/* Skip for now */}
@@ -444,7 +464,7 @@ export function ScreenTeamMembers({
               <button type="button" onClick={onDone} className="w-10 h-10 flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--background-surface-soft)] rounded-full transition-colors" aria-label="Go back">
                 <ChevronLeft size={24} />
               </button>
-              <h3 className="text-[var(--text-primary)]">{context === 'flow' ? 'Set up your team' : 'Your team'}</h3>
+              <h3 className="text-[var(--text-primary)]">{context === 'flow' ? 'Who needs account access?' : 'Your team'}</h3>
             </div>
             {context !== 'flow' && (
               <button
@@ -643,14 +663,17 @@ export function ScreenTeamMembers({
                                 <UserX size={12} />
                                 Revoke
                               </button>
-                              <button
-                                onClick={() => onSimulateVerify(member.id)}
-                                className="flex items-center gap-1.5 px-3 py-2 text-[var(--emerald-600)] border border-[var(--emerald-600)]/30 rounded-[var(--radius-pill)] hover:bg-[var(--emerald-50)] transition-colors"
-                                style={{ fontSize: '13px', fontWeight: 600 }}
-                              >
-                                <Shield size={12} />
-                                Simulate verify
-                              </button>
+                              {/* Dev-only simulation button */}
+                              {import.meta.env.DEV && (
+                                <button
+                                  onClick={() => onSimulateVerify(member.id)}
+                                  className="flex items-center gap-1.5 px-3 py-2 text-[var(--emerald-600)] border border-[var(--emerald-600)]/30 rounded-[var(--radius-pill)] hover:bg-[var(--emerald-50)] transition-colors"
+                                  style={{ fontSize: '13px', fontWeight: 600 }}
+                                >
+                                  <Shield size={12} />
+                                  Simulate verify
+                                </button>
+                              )}
                             </>
                           )}
 
@@ -678,14 +701,24 @@ export function ScreenTeamMembers({
                   </div>
                 ))}
 
+                {/* Team capacity indicator */}
+                <p className="text-center text-[var(--text-muted)]" style={{ fontSize: '12px', fontWeight: 500 }}>
+                  {totalMemberCount} of {MAX_TEAM_MEMBERS} team slots used
+                </p>
+
                 {/* Add another person CTA */}
                 <button
                   onClick={onAddNewMember}
-                  className="w-full py-4 flex items-center justify-center gap-2 rounded-[var(--radius-pill)] border border-[var(--brand-primary-navy)] text-[var(--brand-primary-navy)] hover:bg-[var(--background-surface-soft)] transition-all"
+                  disabled={isAtCapacity}
+                  className={`w-full py-4 flex items-center justify-center gap-2 rounded-[var(--radius-pill)] border transition-all ${
+                    isAtCapacity
+                      ? 'border-[var(--divider)] text-[var(--text-muted)] cursor-not-allowed'
+                      : 'border-[var(--brand-primary-navy)] text-[var(--brand-primary-navy)] hover:bg-[var(--background-surface-soft)]'
+                  }`}
                   style={{ fontSize: '16px', fontWeight: 600 }}
                 >
                   <Plus size={20} />
-                  Add another person
+                  {isAtCapacity ? 'Team is full' : 'Add another person'}
                 </button>
 
                 {/* Review approval setup link */}
@@ -695,7 +728,7 @@ export function ScreenTeamMembers({
                     className="w-full flex items-center justify-center gap-2 text-[var(--accent-primary)] py-3 hover:opacity-80 transition-opacity"
                     style={{ fontSize: '16px', fontWeight: 600 }}
                   >
-                    Review your approval setup
+                    Review payment approval rules
                     <ChevronRight size={18} />
                   </button>
                 )}

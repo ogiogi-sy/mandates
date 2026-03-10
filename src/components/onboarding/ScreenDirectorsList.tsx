@@ -142,6 +142,9 @@ export function ScreenDirectorsList({ directors, onAdd, onContinue }: ScreenDire
                 <div className="px-5 pb-6 animate-in fade-in slide-in-from-top-2 duration-200">
                   <div className="w-full h-px bg-divider/50 mb-5" />
                   
+                  {/* TODO: Q2 / ID&V advanced — add email validation (OTP) and phone number
+                     verification before proceeding. Flagged by Patty in Mar 9 SME review:
+                     "Have we validated actually?... it feels like there should be some sort of validation" */}
                   <div className="space-y-4">
                     <div className="space-y-1">
                       <label className="text-xs font-bold text-text-secondary uppercase tracking-wider ml-1">Email address</label>

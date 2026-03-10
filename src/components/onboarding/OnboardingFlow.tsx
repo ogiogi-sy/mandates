@@ -61,12 +61,12 @@ import { toast } from 'sonner@2.0.3';
  *   5  Identity Verification (Onfido)
  *   6  Connect Bank
  *   7  Select Bank
- *   8  Authority Confirmation (Screen A)
- *   9  Approval Rule (Screen B)        — skipped for sole director
- *  10  Team Members (Screen C)          — skipped for sole director
- *  11  Mandate Summary (Screen E)       — sole director consent
+ *   8  Authority Confirmation (Screen A) — auto-skipped for sole director
+ *   9  Reserved — Approval Rule moved to activation (auto-advance)
+ *  10  Team Members (Screen C)           — skipped for sole director
+ *  11  Mandate Summary (Screen E)        — sole director consent
  *  12  Create Passkey
- *  13  Review Application               — end of progress bar
+ *  13  Review Application                — end of progress bar
  *  14  Celebration
  *  15  Dashboard
  *
@@ -80,21 +80,21 @@ import { toast } from 'sonner@2.0.3';
  *   7  Identity Verification (Onfido)
  *   8  Connect Bank
  *   9  Select Bank
- *  10  Authority Confirmation (Screen A)
- *  11  Approval Rule (Screen B)        — skipped for sole director
- *  12  Team Members (Screen C)          — skipped for sole director
- *  13  Mandate Summary (Screen E)       — sole director consent
+ *  10  Authority Confirmation (Screen A) — auto-skipped for sole director
+ *  11  Reserved — Approval Rule moved to activation (auto-advance)
+ *  12  Team Members (Screen C)           — skipped for sole director
+ *  13  Mandate Summary (Screen E)        — sole director consent
  *  14  Trading Address
  *  15  Review Details
  *  16-23  Business Questions
- *  24  Review & Submit                  — end of progress bar
+ *  24  Review & Submit                   — end of progress bar
  *  25  Celebration
  *  26  Dashboard
  *
- * Sole director (Ideal):    step 8 → jump to 11 (Mandate Summary for consent)
- * Multi director (Ideal):   step 8 → 9 → 10 → 11 → 12
- * Sole director (Optimised): step 10 → jump to 13 (Mandate Summary for consent)
- * Multi director (Optimised): step 10 → 11 → 12 → 13 → 14
+ * Sole director (Ideal):     auto-skip step 8 → jump to 11 (Mandate Summary)
+ * Multi director (Ideal):    step 8 → 10 → 11 → 12 (skip step 9)
+ * Sole director (Optimised): auto-skip step 10 → jump to 13 (Mandate Summary)
+ * Multi director (Optimised): step 10 → 12 → 13 → 14 (skip step 11)
  */
 
 export function OnboardingFlow() {
@@ -715,20 +715,24 @@ export function OnboardingFlow() {
   // SHARED: AUTHORITY CONFIRMATION HANDLER
   // =====================
   const handleAuthorityConfirmation = (authorityType: string, boardResUploaded: boolean) => {
-    const teamMembers = state.directors
-      .filter(d => !d.isPrimaryHolder)
-      .map(d => ({
-        id: d.id,
-        name: d.name,
-        email: d.email || '',
-        role: 'director' as const,
-        permissions: {
-          viewAccount: true, initiatePayments: true, approvePayments: true,
-          manageBeneficiaries: true, manageTeam: true, cardAccess: true,
-        },
-        status: 'not_invited' as const,
-        isFromCompaniesHouse: true,
-      }));
+    // Only populate team members from Companies House directors for multi-director mode.
+    // Sole director = only the primary account holder has access.
+    const teamMembers = authorityType === 'sole_director'
+      ? []
+      : state.directors
+          .filter(d => !d.isPrimaryHolder)
+          .map(d => ({
+            id: d.id,
+            name: d.name,
+            email: d.email || '',
+            role: 'director' as const,
+            permissions: {
+              viewAccount: true, initiatePayments: true, approvePayments: true,
+              manageBeneficiaries: true, manageTeam: true, cardAccess: true,
+            },
+            status: 'not_invited' as const,
+            isFromCompaniesHouse: true,
+          }));
 
     const timestamp = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + ' · ' + new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
     const auditEntry: MandateAuditEntry = {
@@ -744,13 +748,13 @@ export function OnboardingFlow() {
     //   Ideal:     step 8 → 11 (Mandate Summary for consent)
     //   Optimised: step 10 → 13 (Mandate Summary for consent)
     const soleSkipTarget = state.journeyType === 'optimised' ? 13 : 11;
-    // Multi-director next step (approval rule):
-    //   Ideal:     step 8 → 9
-    //   Optimised: step 10 → 11
-    const multiNextStep = state.journeyType === 'optimised' ? 11 : 9;
+    // Multi-director next step (team members — skipping approval rule):
+    //   Ideal:     step 8 → 10
+    //   Optimised: step 10 → 12
+    const multiNextStep = state.journeyType === 'optimised' ? 12 : 10;
 
     if (authorityType === 'sole_director') {
-      // Sole director: skip approval rule & team members, but still show mandate summary for consent
+      // Sole director: skip approval rules + team members, show mandate summary for consent
       setState(prev => ({
         ...prev,
         mandate: {
@@ -776,6 +780,7 @@ export function OnboardingFlow() {
           auditLog: [...prev.mandate.auditLog, auditEntry],
         },
         step: multiNextStep,
+        dashboardView: 'team', // Reset for team step
       }));
     }
   };
@@ -891,35 +896,30 @@ export function OnboardingFlow() {
       </OnboardingLayout>
     );
 
-    // Step 8: Authority Confirmation (Screen A)
-    if (state.step === 8) return (
-      <OnboardingLayout currentStep={8} totalSteps={progressTotal} title={titles[7]} onSaveExit={handleSaveExit} onBack={prevStep}>
-        <ScreenAuthorityConfirmation
-          companyName={state.selectedCompany?.name || 'Bright Hospitality Ltd'}
-          directorCount={state.directors.length}
-          onContinue={handleAuthorityConfirmation}
-          initialAuthorityType={state.mandate.authorityType}
-        />
-      </OnboardingLayout>
-    );
+    // Step 8: Authority Confirmation (Screen A) — auto-skipped for sole director
+    if (state.step === 8) {
+      // Sole director: auto-set authority and jump to mandate summary
+      if (state.directors.length === 1) {
+        handleAuthorityConfirmation('sole_director', false);
+        return null;
+      }
+      return (
+        <OnboardingLayout currentStep={8} totalSteps={progressTotal} title={titles[7]} onSaveExit={handleSaveExit} onBack={prevStep}>
+          <ScreenAuthorityConfirmation
+            companyName={state.selectedCompany?.name || 'Bright Hospitality Ltd'}
+            directorCount={state.directors.length}
+            onContinue={handleAuthorityConfirmation}
+            initialAuthorityType={state.mandate.authorityType}
+          />
+        </OnboardingLayout>
+      );
+    }
 
-    // Step 9: Approval Rule (Screen B) — skipped for sole director
-    if (state.step === 9) return (
-      <OnboardingLayout currentStep={9} totalSteps={progressTotal} title={titles[8]} onSaveExit={handleSaveExit} onBack={prevStep}>
-        <ScreenApprovalRule
-          defaultThreshold={5000}
-          isSoleDirector={state.mandate.authorityType === 'sole_director'}
-          onContinue={(rule, thresholdAmount) => {
-            setState(prev => ({
-              ...prev,
-              mandate: { ...prev.mandate, approvalRule: rule, thresholdAmount },
-              dashboardView: 'team', // Reset for team step
-            }));
-            nextStep();
-          }}
-        />
-      </OnboardingLayout>
-    );
+    // Step 9: Reserved — Approval Rule moved to activation (auto-advance)
+    if (state.step === 9) {
+      setState(prev => ({ ...prev, step: 10 }));
+      return null;
+    }
 
     // Step 10: Team Members (Screen C) — in-flow, skipped for sole director
     if (state.step === 10) {
@@ -930,17 +930,17 @@ export function OnboardingFlow() {
             {renderTeamMembersScreen(
               'flow',
               () => setState(prev => ({ ...prev, dashboardView: 'team', editingMemberId: null, step: 11 })),
-              () => prevStep()
+              () => setState(prev => ({ ...prev, dashboardView: 'team', editingMemberId: null }))
             )}
           </OnboardingLayout>
         );
       }
       return (
-        <OnboardingLayout currentStep={10} totalSteps={progressTotal} title={titles[9]} onSaveExit={handleSaveExit} onBack={prevStep}>
+        <OnboardingLayout currentStep={10} totalSteps={progressTotal} title={titles[9]} onSaveExit={handleSaveExit} onBack={() => setState(prev => ({ ...prev, step: 8 }))}>
           {renderTeamMembersScreen(
             'flow',
             () => setState(prev => ({ ...prev, dashboardView: 'team', editingMemberId: null, step: 11 })),
-            () => prevStep()
+            () => setState(prev => ({ ...prev, step: 8 }))
           )}
         </OnboardingLayout>
       );
@@ -1033,6 +1033,34 @@ export function OnboardingFlow() {
         );
       }
 
+      // Sub-view: Approval rules (activation)
+      if (dashView === 'approval-rules') {
+        return (
+          <div className="fixed inset-0 bg-[var(--background-app)] z-50 overflow-y-auto">
+            <ScreenApprovalRule
+              isSoleDirector={state.directors.length <= 1}
+              directorCount={state.directors.length}
+              initialRule={state.mandate.approvalRule}
+              initialThresholdAmount={state.mandate.thresholdAmount}
+              context="dashboard"
+              onContinue={(rule, thresholdAmount) => {
+                setState(prev => ({
+                  ...prev,
+                  mandate: {
+                    ...prev.mandate,
+                    approvalRule: rule,
+                    thresholdAmount: thresholdAmount,
+                  },
+                  dashboardView: 'main',
+                }));
+                toast.success('Payment rules saved');
+              }}
+              onBack={() => setState(prev => ({ ...prev, dashboardView: 'main' }))}
+            />
+          </div>
+        );
+      }
+
       // Main dashboard
       return (
         <div className="fixed inset-0 bg-[var(--background-app)] z-50 overflow-y-auto">
@@ -1042,6 +1070,8 @@ export function OnboardingFlow() {
             mandate={state.mandate}
             onSetupTeam={() => setState(prev => ({ ...prev, dashboardView: 'team' }))}
             onViewTeamStatus={() => setState(prev => ({ ...prev, dashboardView: 'team' }))}
+            onSetupPaymentRules={() => setState(prev => ({ ...prev, dashboardView: 'approval-rules' }))}
+            onSetupPaymentPermissions={() => setState(prev => ({ ...prev, dashboardView: 'mandate-summary' }))}
             onDismissBanner={() => toast.info('Banner dismissed')}
           />
         </div>
@@ -1105,27 +1135,30 @@ export function OnboardingFlow() {
       </OnboardingLayout>
     );
 
-    // Step 10: Authority Confirmation (Screen A)
-    if (state.step === 10) return (
-      <OnboardingLayout currentStep={10} totalSteps={progressTotal} title={titles[9]} onSaveExit={handleSaveExit} onBack={prevStep}>
-        <ScreenAuthorityConfirmation
-          companyName={state.selectedCompany?.name || 'Bright Hospitality Ltd'}
-          directorCount={state.directors.length}
-          onContinue={handleAuthorityConfirmation}
-          initialAuthorityType={state.mandate.authorityType}
-        />
-      </OnboardingLayout>
-    );
+    // Step 10: Authority Confirmation (Screen A) — auto-skipped for sole director
+    if (state.step === 10) {
+      // Sole director: auto-set authority and jump to mandate summary
+      if (state.directors.length === 1) {
+        handleAuthorityConfirmation('sole_director', false);
+        return null;
+      }
+      return (
+        <OnboardingLayout currentStep={10} totalSteps={progressTotal} title={titles[9]} onSaveExit={handleSaveExit} onBack={prevStep}>
+          <ScreenAuthorityConfirmation
+            companyName={state.selectedCompany?.name || 'Bright Hospitality Ltd'}
+            directorCount={state.directors.length}
+            onContinue={handleAuthorityConfirmation}
+            initialAuthorityType={state.mandate.authorityType}
+          />
+        </OnboardingLayout>
+      );
+    }
 
-    // Step 11: Approval Rule (Screen B) — skipped for sole director
-    if (state.step === 11) return (
-      <OnboardingLayout currentStep={11} totalSteps={progressTotal} title={titles[10]} onSaveExit={handleSaveExit} onBack={prevStep}>
-        <ScreenApprovalRule defaultThreshold={5000} isSoleDirector={state.mandate.authorityType === 'sole_director'} onContinue={(rule, thresholdAmount) => {
-          setState(prev => ({ ...prev, mandate: { ...prev.mandate, approvalRule: rule, thresholdAmount }, dashboardView: 'team' }));
-          nextStep();
-        }} />
-      </OnboardingLayout>
-    );
+    // Step 11: Reserved — Approval Rule moved to activation (auto-advance)
+    if (state.step === 11) {
+      setState(prev => ({ ...prev, step: 12 }));
+      return null;
+    }
 
     // Step 12: Team Members (in-flow) — skipped for sole director
     if (state.step === 12) {
@@ -1136,17 +1169,17 @@ export function OnboardingFlow() {
             {renderTeamMembersScreen(
               'flow',
               () => setState(prev => ({ ...prev, dashboardView: 'team', editingMemberId: null, step: 13 })),
-              () => prevStep()
+              () => setState(prev => ({ ...prev, dashboardView: 'team', editingMemberId: null }))
             )}
           </OnboardingLayout>
         );
       }
       return (
-        <OnboardingLayout currentStep={12} totalSteps={progressTotal} title={titles[11]} onSaveExit={handleSaveExit} onBack={prevStep}>
+        <OnboardingLayout currentStep={12} totalSteps={progressTotal} title={titles[11]} onSaveExit={handleSaveExit} onBack={() => setState(prev => ({ ...prev, step: 10 }))}>
           {renderTeamMembersScreen(
             'flow',
             () => setState(prev => ({ ...prev, dashboardView: 'team', editingMemberId: null, step: 13 })),
-            () => prevStep()
+            () => setState(prev => ({ ...prev, step: 10 }))
           )}
         </OnboardingLayout>
       );
@@ -1240,6 +1273,34 @@ export function OnboardingFlow() {
         return <MandateSuccessScreen onGoToDashboard={() => setState(prev => ({ ...prev, dashboardView: 'main' }))} />;
       }
 
+      // Sub-view: Approval rules (activation)
+      if (dashView === 'approval-rules') {
+        return (
+          <div className="fixed inset-0 bg-[var(--background-app)] z-50 overflow-y-auto">
+            <ScreenApprovalRule
+              isSoleDirector={state.directors.length <= 1}
+              directorCount={state.directors.length}
+              initialRule={state.mandate.approvalRule}
+              initialThresholdAmount={state.mandate.thresholdAmount}
+              context="dashboard"
+              onContinue={(rule, thresholdAmount) => {
+                setState(prev => ({
+                  ...prev,
+                  mandate: {
+                    ...prev.mandate,
+                    approvalRule: rule,
+                    thresholdAmount: thresholdAmount,
+                  },
+                  dashboardView: 'main',
+                }));
+                toast.success('Payment rules saved');
+              }}
+              onBack={() => setState(prev => ({ ...prev, dashboardView: 'main' }))}
+            />
+          </div>
+        );
+      }
+
       return (
         <div className="fixed inset-0 bg-[var(--background-app)] z-50 overflow-y-auto">
           <ScreenDashboard
@@ -1248,6 +1309,8 @@ export function OnboardingFlow() {
             mandate={state.mandate}
             onSetupTeam={() => setState(prev => ({ ...prev, dashboardView: 'team' }))}
             onViewTeamStatus={() => setState(prev => ({ ...prev, dashboardView: 'team' }))}
+            onSetupPaymentRules={() => setState(prev => ({ ...prev, dashboardView: 'approval-rules' }))}
+            onSetupPaymentPermissions={() => setState(prev => ({ ...prev, dashboardView: 'mandate-summary' }))}
             onDismissBanner={() => toast.info('Banner dismissed')}
           />
         </div>

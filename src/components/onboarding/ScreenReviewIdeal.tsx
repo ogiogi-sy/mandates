@@ -1,7 +1,7 @@
 import { Check, Pencil, CheckCircle2, Shield, ChevronRight } from 'lucide-react';
 import { OnboardingState } from './types';
 import { StickyFooter } from './StickyFooter';
-import { PaymentFlowPreview } from './PaymentFlowPreview';
+
 import { useState } from 'react';
 
 interface ScreenReviewIdealProps {
@@ -36,12 +36,11 @@ export function ScreenReviewIdeal({ state, onSubmit, onEdit }: ScreenReviewIdeal
     switch (state.mandate.authorityType) {
       case 'sole_director': return 'Sole Director';
       case 'multi_director': return 'Multiple Directors';
-      case 'board_authorised': return 'Board Authorised';
       default: return 'Sole Director';
     }
   };
 
-  const isMultiDirector = state.mandate.authorityType === 'multi_director' || state.mandate.authorityType === 'board_authorised';
+  const isMultiDirector = state.mandate.authorityType === 'multi_director';
 
   const sections = [
     {
@@ -190,13 +189,7 @@ export function ScreenReviewIdeal({ state, onSubmit, onEdit }: ScreenReviewIdeal
             </div>
           )}
 
-          {/* Payment Flow Preview */}
-          <PaymentFlowPreview
-            teamMembers={state.mandate.teamMembers}
-            approvalRule={state.mandate.approvalRule}
-            thresholdAmount={state.mandate.thresholdAmount}
-            primarySignatoryName={getApplicantName()}
-          />
+          {/* Payment Flow Preview — moved to dashboard activation */}
         </div>
       )
     },

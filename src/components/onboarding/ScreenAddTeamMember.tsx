@@ -49,7 +49,7 @@ const DEFAULT_PERMISSIONS: Record<TeamMember['role'], TeamMember['permissions']>
   },
   accountant: {
     viewAccount: true,
-    initiatePayments: false,
+    initiatePayments: true,
     approvePayments: false,
     manageBeneficiaries: false,
     manageTeam: false,
@@ -387,8 +387,13 @@ export function ScreenAddTeamMember({
       {/* Permissions section */}
       <div className="space-y-[var(--space-md)]">
         <label className="text-[var(--text-secondary)] ml-1">Permissions</label>
+        {(() => {
+          const visiblePermissions = context === 'flow'
+            ? PERMISSION_LABELS.filter(p => !['initiatePayments', 'approvePayments'].includes(p.key))
+            : PERMISSION_LABELS;
+          return (
         <div className="bg-[var(--background-surface)] rounded-[var(--radius-lg)] border border-[var(--divider)] overflow-hidden">
-          {PERMISSION_LABELS.map((perm, idx) => {
+          {visiblePermissions.map((perm, idx) => {
             const isManageTeamRestricted = perm.key === 'manageTeam' && !isDirector;
             const isApproveKycRestricted = perm.key === 'approvePayments' && isUnverifiedMember;
             const isToggleDisabled = isManageTeamRestricted || isApproveKycRestricted;
@@ -427,13 +432,16 @@ export function ScreenAddTeamMember({
                     `} />
                   </button>
                 </div>
-                {idx < PERMISSION_LABELS.length - 1 && <div className="h-px bg-[var(--divider)] mx-[var(--space-lg)]" />}
+                {idx < visiblePermissions.length - 1 && <div className="h-px bg-[var(--divider)] mx-[var(--space-lg)]" />}
               </div>
             );
           })}
         </div>
+          );
+        })()}
 
-        {/* Ephemeral approve note */}
+        {/* Ephemeral approve note — only in dashboard context */}
+        {context !== 'flow' && (
         <AnimatePresence>
           {showApproveNote && (
             <motion.div
@@ -449,9 +457,10 @@ export function ScreenAddTeamMember({
             </motion.div>
           )}
         </AnimatePresence>
+        )}
 
-        {/* Persistent KYC/AML notice when payment permissions are on */}
-        {(permissions.approvePayments || permissions.initiatePayments) && (
+        {/* Persistent KYC/AML notice when payment permissions are on — only in dashboard context */}
+        {context !== 'flow' && (permissions.approvePayments || permissions.initiatePayments) && (
           <div className="flex items-start gap-[var(--space-sm)] p-[var(--space-md)] bg-[var(--blue-50)] border border-[var(--accent-primary)]/15 rounded-[var(--radius-sm)]">
             <ShieldAlert size={14} className="text-[var(--accent-primary)] mt-0.5 shrink-0" />
             <div>
@@ -467,8 +476,8 @@ export function ScreenAddTeamMember({
           </div>
         )}
 
-        {/* Segregation of duties notice */}
-        {permissions.initiatePayments && !permissions.approvePayments && (
+        {/* Segregation of duties notice — only in dashboard context */}
+        {context !== 'flow' && permissions.initiatePayments && !permissions.approvePayments && (
           <div className="flex items-start gap-[var(--space-sm)] p-[var(--space-md)] bg-[var(--emerald-50)] border border-[var(--emerald-600)]/15 rounded-[var(--radius-sm)]">
             <ShieldAlert size={14} className="text-[var(--emerald-600)] mt-0.5 shrink-0" />
             <div>
@@ -483,8 +492,8 @@ export function ScreenAddTeamMember({
         )}
       </div>
 
-      {/* Payment limits — collapsible, only shown when initiate/approve perms are on */}
-      {showLimits && (
+      {/* Payment limits — collapsible, only shown when initiate/approve perms are on, hidden in flow context */}
+      {showLimits && context !== 'flow' && (
         <div className="bg-[var(--background-surface)] rounded-[var(--radius-lg)] border border-[var(--divider)] overflow-hidden">
           <button
             type="button"
@@ -571,7 +580,7 @@ export function ScreenAddTeamMember({
         {/* Header */}
         <div className="space-y-2">
           <h2 className="text-[var(--text-primary)]">Add a team member</h2>
-          <p className="text-[var(--text-secondary)]">Set their role, permissions, and payment limits.</p>
+          <p className="text-[var(--text-secondary)]">Set their role and account access permissions.</p>
         </div>
 
         {formContent}
