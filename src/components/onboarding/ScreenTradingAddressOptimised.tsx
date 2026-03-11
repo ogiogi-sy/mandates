@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, UploadCloud, ChevronDown, ChevronUp, MapPin, Building2 } from 'lucide-react';
+import { Check, UploadCloud, ChevronDown, ChevronUp, MapPin, Building2, Search, Info } from 'lucide-react';
 import { StickyFooter } from './StickyFooter';
 
 interface ScreenTradingAddressOptimisedProps {
@@ -8,10 +8,27 @@ interface ScreenTradingAddressOptimisedProps {
 }
 
 export function ScreenTradingAddressOptimised({ registeredAddress, onContinue }: ScreenTradingAddressOptimisedProps) {
-  const [selectedType, setSelectedType] = useState<'registered' | 'custom' | 'document'>('registered'); // Pre-selected registered
-  const [customAddress, setCustomAddress] = useState('123 High Street, London, EC1 4AB'); // Pre-filled
+  const [selectedType, setSelectedType] = useState<'registered' | 'custom' | 'document'>('registered');
+  const [postcode, setPostcode] = useState('');
+  const [searchResults, setSearchResults] = useState<string[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState('');
+  const [hasSearched, setHasSearched] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  
+  const [showDocTooltip, setShowDocTooltip] = useState(false);
+
+  const handlePostcodeSearch = () => {
+    if (postcode.trim().length < 3) return;
+    // Mock address results for prototype
+    setSearchResults([
+      `1 High Street, ${postcode.toUpperCase()}, London`,
+      `2 High Street, ${postcode.toUpperCase()}, London`,
+      `3 Station Road, ${postcode.toUpperCase()}, London`,
+      `4 Church Lane, ${postcode.toUpperCase()}, London`,
+    ]);
+    setHasSearched(true);
+    setSelectedAddress('');
+  };
+
   // Helper to expand custom input
   const isCustomExpanded = selectedType === 'custom';
 
@@ -59,13 +76,59 @@ export function ScreenTradingAddressOptimised({ registeredAddress, onContinue }:
           </button>
 
           {isCustomExpanded && (
-            <div className="px-5 pb-5 pl-[60px] animate-in fade-in slide-in-from-top-2">
-              <textarea
-                value={customAddress}
-                onChange={(e) => setCustomAddress(e.target.value)}
-                placeholder="Enter full trading address..."
-                className="w-full p-3 rounded-xl border border-divider bg-offwhite-50 focus:bg-white focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10 outline-none transition-all text-sm min-h-[80px] resize-none"
-              />
+            <div className="px-5 pb-5 pl-[60px] animate-in fade-in slide-in-from-top-2 space-y-3">
+              {/* Postcode search */}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={postcode}
+                  onChange={(e) => {
+                    setPostcode(e.target.value);
+                    setHasSearched(false);
+                    setSearchResults([]);
+                    setSelectedAddress('');
+                  }}
+                  placeholder="Enter postcode"
+                  className="flex-1 p-3 rounded-xl border border-divider bg-offwhite-50 focus:bg-white focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10 outline-none transition-all text-sm"
+                />
+                <button
+                  onClick={handlePostcodeSearch}
+                  disabled={postcode.trim().length < 3}
+                  className="px-4 py-3 rounded-xl bg-brand-blue text-white font-bold text-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-1.5"
+                >
+                  <Search size={14} />
+                  Find address
+                </button>
+              </div>
+
+              {/* Search results */}
+              {hasSearched && searchResults.length > 0 && (
+                <div className="border border-divider rounded-xl overflow-hidden bg-white">
+                  {searchResults.map((address, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedAddress(address)}
+                      className={`w-full p-3 text-left text-sm flex items-center gap-3 transition-colors ${
+                        idx > 0 ? 'border-t border-divider' : ''
+                      } ${selectedAddress === address
+                        ? 'bg-[#E5ECF5] text-brand-navy font-semibold'
+                        : 'hover:bg-offwhite-50 text-text-secondary'
+                      }`}
+                    >
+                      {selectedAddress === address && (
+                        <Check size={14} className="text-brand-blue shrink-0" strokeWidth={3} />
+                      )}
+                      <span className={selectedAddress === address ? '' : 'ml-[26px]'}>{address}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {hasSearched && searchResults.length === 0 && (
+                <p className="text-sm text-text-secondary">
+                  No addresses found. Check your postcode and try again.
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -85,7 +148,25 @@ export function ScreenTradingAddressOptimised({ registeredAddress, onContinue }:
               <span className="font-bold text-brand-navy block mb-0.5">Upload proof of address</span>
               <p className="text-xs text-text-secondary">Utility bill or bank statement (last 3 months)</p>
             </div>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); setShowDocTooltip(!showDocTooltip); }}
+              className="text-text-secondary hover:text-brand-blue transition-colors p-1 rounded-full"
+              aria-label="More info about accepted documents"
+            >
+              <Info size={16} />
+            </button>
           </button>
+          {showDocTooltip && (
+            <div className="ml-[52px] mt-2 p-3 bg-[#E5ECF5] rounded-xl text-sm text-brand-navy animate-in fade-in">
+              <p className="font-semibold mb-1">Accepted documents</p>
+              <ul className="list-disc ml-4 text-text-secondary space-y-0.5 text-xs">
+                <li>Utility bill (gas, electric, water) — dated within 3 months</li>
+                <li>Bank or building society statement — dated within 3 months</li>
+                <li>Commercial lease agreement — current and signed</li>
+              </ul>
+            </div>
+          )}
 
           {selectedType === 'document' && (
             <div className="mt-4 ml-[52px] animate-in fade-in">
@@ -118,13 +199,13 @@ export function ScreenTradingAddressOptimised({ registeredAddress, onContinue }:
           onClick={() => {
             let value = '';
             if (selectedType === 'registered') value = registeredAddress;
-            if (selectedType === 'custom') value = customAddress;
+            if (selectedType === 'custom') value = selectedAddress;
             if (selectedType === 'document') value = uploadedFile ? uploadedFile.name : 'Document uploaded';
 
             onContinue(selectedType, value);
           }}
           disabled={
-            (selectedType === 'custom' && customAddress.length < 5) ||
+            (selectedType === 'custom' && selectedAddress.length < 5) ||
             (selectedType === 'document' && !uploadedFile)
           }
           className="w-full bg-primary text-primary-foreground h-12 rounded-full font-bold text-base hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-900/10"

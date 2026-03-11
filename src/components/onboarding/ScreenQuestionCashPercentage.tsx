@@ -2,25 +2,23 @@ import { useState } from 'react';
 import { ScreenBusinessQuestionLayout } from './ScreenBusinessQuestionLayout';
 import { Check } from 'lucide-react';
 
-interface ScreenQuestionEmployeesProps {
+interface ScreenQuestionCashPercentageProps {
   onNext: (value: string) => void;
   onSaveExit: () => void;
-  prefilled?: boolean;
 }
 
-const OPTIONS = ['1–10', '11–50', '51–250', '250+'];
+const OPTIONS = ['None', 'Less than 25%', '25–50%', '51–75%', 'More than 75%'];
 
-export function ScreenQuestionEmployees({ onNext, onSaveExit, prefilled = false }: ScreenQuestionEmployeesProps) {
-  const [selected, setSelected] = useState<string>(prefilled ? OPTIONS[0] : '');
+export function ScreenQuestionCashPercentage({ onNext, onSaveExit }: ScreenQuestionCashPercentageProps) {
+  const [selected, setSelected] = useState<string>('');
 
   return (
     <ScreenBusinessQuestionLayout
-      title="Number of employees"
-      subtitle="How many people does your business employ?"
+      title="Cash revenue"
+      subtitle="What percentage of your revenue comes from cash?"
       onNext={() => onNext(selected)}
       onSaveExit={onSaveExit}
       isValid={!!selected}
-      prefilled={prefilled}
     >
       <div className="space-y-3">
         {OPTIONS.map((option) => (
@@ -29,8 +27,8 @@ export function ScreenQuestionEmployees({ onNext, onSaveExit, prefilled = false 
             onClick={() => setSelected(option)}
             className={`
               w-full p-5 rounded-[16px] border text-left flex items-center justify-between transition-all
-              ${selected === option 
-                ? 'border-brand-blue bg-[#E5ECF5] shadow-sm' 
+              ${selected === option
+                ? 'border-brand-blue bg-[#E5ECF5] shadow-sm'
                 : 'border-divider bg-white hover:border-brand-blue/50'}
             `}
           >
@@ -38,9 +36,9 @@ export function ScreenQuestionEmployees({ onNext, onSaveExit, prefilled = false 
               {option}
             </span>
             {selected === option && (
-               <div className="w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center">
-                 <Check size={14} className="text-white stroke-[3px]" />
-               </div>
+              <div className="w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center">
+                <Check size={14} className="text-white stroke-[3px]" />
+              </div>
             )}
           </button>
         ))}

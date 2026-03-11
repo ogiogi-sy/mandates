@@ -20,7 +20,12 @@ export interface OnboardingState {
     type: 'registered' | 'custom' | 'document';
     value: string;
   } | null;
-  
+
+  correspondenceAddress: {
+    type: 'registered' | 'trading' | 'custom';
+    value: string;
+  } | null;
+
   selectedBranch: Branch | null;
   
   // Refactored Business Details
@@ -33,6 +38,10 @@ export interface OnboardingState {
     monthlyIncome?: string;
     paymentTypes?: string[];
     cashDeposits?: string;
+    cashPercentage?: string;
+    sourceOfFunds?: string[];
+    sourceOfWealth?: string[];
+    balanceSheet?: string;
     industry?: string; // Legacy field, might keep for compatibility
     cashHandling?: string; // Legacy field
     paymentVolume?: string; // Legacy
@@ -64,7 +73,7 @@ export interface OnboardingState {
   
   termination?: TerminationState;
   mandate: MandateState;
-  dashboardView: 'main' | 'team' | 'add-member' | 'mandate-summary' | 'mandate-success' | 'approval-rules';
+  dashboardView: 'main' | 'team' | 'add-member' | 'mandate-summary' | 'mandate-success' | 'approval-rules' | 'second-director-preview';
   editingMemberId?: string | null;
 }
 
@@ -157,7 +166,7 @@ export interface MandateState {
   /** ISO timestamp of when mandate was confirmed */
   confirmedAt: string | null;
   // Account activation gating (Gap 2)
-  activationStatus: 'provisionally_active' | 'restricted' | 'fully_active';
+  activationStatus: 'pending_approval' | 'restricted' | 'fully_active';
   // Audit trail (Gap 5)
   auditLog: MandateAuditEntry[];
   // Payment restrictions (Gap 4)
@@ -174,3 +183,7 @@ export interface Branch {
   address: string;
   distance: string;
 }
+
+// TODO: Shareholding & UBO (Ultimate Beneficial Owner) — requires workshop
+// to determine handling for 25%+ shareholders and PSC (Persons of Significant Control).
+// See: https://www.gov.uk/guidance/people-with-significant-control-pscs

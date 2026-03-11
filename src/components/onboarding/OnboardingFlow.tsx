@@ -37,6 +37,16 @@ import { ScreenQuestionWebsite } from './ScreenQuestionWebsite';
 import { ScreenQuestionMonthlyIncome } from './ScreenQuestionMonthlyIncome';
 import { ScreenQuestionPaymentTypes } from './ScreenQuestionPaymentTypes';
 import { ScreenQuestionCashDeposits } from './ScreenQuestionCashDeposits';
+import { ScreenQuestionCashPercentage } from './ScreenQuestionCashPercentage';
+import { ScreenQuestionSourceOfFunds } from './ScreenQuestionSourceOfFunds';
+import { ScreenQuestionSourceOfWealth } from './ScreenQuestionSourceOfWealth';
+import { ScreenQuestionBalanceSheet } from './ScreenQuestionBalanceSheet';
+
+// Correspondence Address
+import { ScreenCorrespondenceAddress } from './ScreenCorrespondenceAddress';
+
+// Second Director Preview
+import { ScreenSecondDirectorPreview } from './ScreenSecondDirectorPreview';
 
 // Mandate Screens
 import { ScreenAuthorityConfirmation } from './ScreenAuthorityConfirmation';
@@ -70,7 +80,7 @@ import { toast } from 'sonner@2.0.3';
  *  14  Celebration
  *  15  Dashboard
  *
- * OPTIMISED FLOW (26 steps):
+ * OPTIMISED FLOW (31 steps):
  *   1  Welcome
  *   2  Find Business
  *   3  Confirm Company
@@ -85,16 +95,23 @@ import { toast } from 'sonner@2.0.3';
  *  12  Team Members (Screen C)           — skipped for sole director
  *  13  Mandate Summary (Screen E)        — sole director consent
  *  14  Trading Address
- *  15  Review Details
- *  16-23  Business Questions
- *  24  Review & Submit                   — end of progress bar
- *  25  Celebration
- *  26  Dashboard
+ *  15  Correspondence Address (NEW)
+ *  16  Review Details
+ *  17-24  Business Questions (existing 8)
+ *  25  Cash Percentage (NEW)
+ *  26  Source of Funds (NEW)
+ *  27  Source of Wealth (NEW)
+ *  28  Balance Sheet (NEW)
+ *  29  Review & Submit                   — end of progress bar
+ *  30  Celebration
+ *  31  Dashboard
  *
  * Sole director (Ideal):     auto-skip step 8 → jump to 11 (Mandate Summary)
  * Multi director (Ideal):    step 8 → 10 → 11 → 12 (skip step 9)
  * Sole director (Optimised): auto-skip step 10 → jump to 13 (Mandate Summary)
  * Multi director (Optimised): step 10 → 12 → 13 → 14 (skip step 11)
+ *
+ * NOTE: optimisedProgressSteps = 29 (steps up to Review & Submit)
  */
 
 export function OnboardingFlow() {
@@ -106,6 +123,7 @@ export function OnboardingFlow() {
     directors: [],
     verificationCode: '',
     tradingAddress: null,
+    correspondenceAddress: null,
     selectedBranch: null,
     businessDetails: null,
     bankConnected: false,
@@ -125,7 +143,7 @@ export function OnboardingFlow() {
       locked: false,
       mandateVersion: null,
       confirmedAt: null,
-      activationStatus: 'provisionally_active',
+      activationStatus: 'pending_approval',
       auditLog: [],
       paymentRestrictions: undefined,
     },
@@ -137,7 +155,7 @@ export function OnboardingFlow() {
   // PROGRESS BAR TOTALS
   // =====================
   const idealProgressSteps = 13;
-  const optimisedProgressSteps = 24;
+  const optimisedProgressSteps = 29;
 
   const getProgressTotal = () => {
     if (state.journeyType === 'ideal') return idealProgressSteps;
@@ -162,8 +180,9 @@ export function OnboardingFlow() {
         "Your Team",         // 12 (Screen C)
         "Mandate Review",    // 13 (Screen E)
         "Trading Address",   // 14
-        "Review Details",    // 15
-        "Business Activity", // 16-23
+        "Correspondence",    // 15
+        "Review Details",    // 16
+        "Business Activity", // 17-24
         "Business Activity",
         "Business Activity",
         "Business Activity",
@@ -171,7 +190,11 @@ export function OnboardingFlow() {
         "Business Activity",
         "Business Activity",
         "Business Activity",
-        "Review and submit",   // 24
+        "Business Activity", // 25 (cash %)
+        "Business Activity", // 26 (source of funds)
+        "Business Activity", // 27 (source of wealth)
+        "Business Activity", // 28 (balance sheet)
+        "Review and submit",   // 29
       ];
     }
     if (state.journeyType === 'ideal') {
@@ -202,7 +225,7 @@ export function OnboardingFlow() {
 
   const nextStep = () => {
     if (state.isEditing) {
-      const reviewStep = state.journeyType === 'optimised' ? 24 : (state.journeyType === 'ideal' ? 13 : 6);
+      const reviewStep = state.journeyType === 'optimised' ? 29 : (state.journeyType === 'ideal' ? 13 : 6);
       setState(prev => ({ ...prev, step: reviewStep, isEditing: false }));
     } else {
       setState(prev => ({ ...prev, step: prev.step + 1 }));
@@ -1061,6 +1084,18 @@ export function OnboardingFlow() {
         );
       }
 
+      // Sub-view: Second director journey preview
+      if (dashView === 'second-director-preview') {
+        const secondDirector = state.mandate.teamMembers.find(m => m.role === 'director');
+        return (
+          <ScreenSecondDirectorPreview
+            directorName={secondDirector?.name || 'Second Director'}
+            companyName={state.selectedCompany?.name || 'Bright Hospitality Ltd'}
+            onBack={() => setState(prev => ({ ...prev, dashboardView: 'main' }))}
+          />
+        );
+      }
+
       // Main dashboard
       return (
         <div className="fixed inset-0 bg-[var(--background-app)] z-50 overflow-y-auto">
@@ -1072,6 +1107,7 @@ export function OnboardingFlow() {
             onViewTeamStatus={() => setState(prev => ({ ...prev, dashboardView: 'team' }))}
             onSetupPaymentRules={() => setState(prev => ({ ...prev, dashboardView: 'approval-rules' }))}
             onSetupPaymentPermissions={() => setState(prev => ({ ...prev, dashboardView: 'mandate-summary' }))}
+            onPreviewSecondDirector={() => setState(prev => ({ ...prev, dashboardView: 'second-director-preview' }))}
             onDismissBanner={() => toast.info('Banner dismissed')}
           />
         </div>
@@ -1203,49 +1239,76 @@ export function OnboardingFlow() {
     // Step 14: Trading Address
     if (state.step === 14) return <OnboardingLayout currentStep={14} totalSteps={progressTotal} title={titles[13]} onSaveExit={handleSaveExit}><ScreenTradingAddressOptimised registeredAddress={state.selectedCompany?.address || '123 Business Rd, London'} onContinue={(type, value) => { setState(prev => ({ ...prev, tradingAddress: { type, value } })); nextStep(); }} /></OnboardingLayout>;
 
-    // Step 15: Review Details
-    if (state.step === 15) return <OnboardingLayout currentStep={15} totalSteps={progressTotal} title={titles[14]} onSaveExit={handleSaveExit}><ScreenReviewDetails tradingName={state.selectedCompany?.name || 'My Company Ltd'} tradingAddress={state.tradingAddress?.value || state.selectedCompany?.address || ''} onContinue={nextStep} onEdit={() => goToStep(14)} /></OnboardingLayout>;
+    // Step 15: Correspondence Address (NEW)
+    if (state.step === 15) {
+      const tradingDiffers = state.tradingAddress?.type !== 'registered';
+      return (
+        <OnboardingLayout currentStep={15} totalSteps={progressTotal} title={titles[14]} onSaveExit={handleSaveExit}>
+          <ScreenCorrespondenceAddress
+            registeredAddress={state.selectedCompany?.address || '123 Business Rd, London'}
+            tradingAddress={state.tradingAddress?.value || null}
+            tradingAddressDiffers={tradingDiffers}
+            onContinue={(type, value) => {
+              setState(prev => ({ ...prev, correspondenceAddress: { type, value } }));
+              nextStep();
+            }}
+          />
+        </OnboardingLayout>
+      );
+    }
 
-    // Steps 16-23: Business Questions
+    // Step 16: Review Details (was 15)
+    if (state.step === 16) return <OnboardingLayout currentStep={16} totalSteps={progressTotal} title={titles[15]} onSaveExit={handleSaveExit}><ScreenReviewDetails tradingName={state.selectedCompany?.name || 'My Company Ltd'} tradingAddress={state.tradingAddress?.value || state.selectedCompany?.address || ''} onContinue={nextStep} onEdit={() => goToStep(14)} /></OnboardingLayout>;
+
+    // Steps 17-24: Business Questions (was 16-23)
     const isOBConnected = !!state.openBanking?.connected;
 
-    if (state.step === 16) return (
-      <OnboardingLayout currentStep={16} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}>
+    if (state.step === 17) return (
+      <OnboardingLayout currentStep={17} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}>
         <ScreenQuestionTurnover onNext={(val) => { if (val === '£5M+') { terminateJourney('high_turnover'); } else { updateBusinessDetails('turnover', val); } }} onSaveExit={handleSaveExit} prefilled={isOBConnected} />
       </OnboardingLayout>
     );
 
-    if (state.step === 17) return <OnboardingLayout currentStep={17} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionEmployees onNext={(val) => updateBusinessDetails('employees', val)} onSaveExit={handleSaveExit} prefilled={isOBConnected} /></OnboardingLayout>;
+    if (state.step === 18) return <OnboardingLayout currentStep={18} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionEmployees onNext={(val) => updateBusinessDetails('employees', val)} onSaveExit={handleSaveExit} prefilled={isOBConnected} /></OnboardingLayout>;
 
-    if (state.step === 18) return <OnboardingLayout currentStep={18} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionIntlPayments onNext={(val) => updateBusinessDetails('internationalPayments', val)} onSaveExit={handleSaveExit} prefilled={isOBConnected} /></OnboardingLayout>;
+    if (state.step === 19) return <OnboardingLayout currentStep={19} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionIntlPayments onNext={(val) => updateBusinessDetails('internationalPayments', val)} onSaveExit={handleSaveExit} prefilled={isOBConnected} /></OnboardingLayout>;
 
-    if (state.step === 19) return <OnboardingLayout currentStep={19} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionRevenue onNext={(val) => updateBusinessDetails('revenueSources', val)} onSaveExit={handleSaveExit} /></OnboardingLayout>;
+    if (state.step === 20) return <OnboardingLayout currentStep={20} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionRevenue onNext={(val) => updateBusinessDetails('revenueSources', val)} onSaveExit={handleSaveExit} /></OnboardingLayout>;
 
-    if (state.step === 20) return <OnboardingLayout currentStep={20} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionWebsite onNext={(val) => updateBusinessDetails('website', val)} onSaveExit={handleSaveExit} /></OnboardingLayout>;
+    if (state.step === 21) return <OnboardingLayout currentStep={21} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionWebsite onNext={(val) => updateBusinessDetails('website', val)} onSaveExit={handleSaveExit} /></OnboardingLayout>;
 
-    if (state.step === 21) return <OnboardingLayout currentStep={21} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionMonthlyIncome onNext={(val) => updateBusinessDetails('monthlyIncome', val)} onSaveExit={handleSaveExit} prefilled={isOBConnected} /></OnboardingLayout>;
+    if (state.step === 22) return <OnboardingLayout currentStep={22} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionMonthlyIncome onNext={(val) => updateBusinessDetails('monthlyIncome', val)} onSaveExit={handleSaveExit} prefilled={isOBConnected} /></OnboardingLayout>;
 
-    if (state.step === 22) return <OnboardingLayout currentStep={22} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionPaymentTypes onNext={(val) => updateBusinessDetails('paymentTypes', val)} onSaveExit={handleSaveExit} prefilled={isOBConnected} /></OnboardingLayout>;
+    if (state.step === 23) return <OnboardingLayout currentStep={23} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionPaymentTypes onNext={(val) => updateBusinessDetails('paymentTypes', val)} onSaveExit={handleSaveExit} prefilled={isOBConnected} /></OnboardingLayout>;
 
-    if (state.step === 23) return <OnboardingLayout currentStep={23} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionCashDeposits onNext={(val) => updateBusinessDetails('cashDeposits', val)} onSaveExit={handleSaveExit} prefilled={isOBConnected} /></OnboardingLayout>;
+    if (state.step === 24) return <OnboardingLayout currentStep={24} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionCashDeposits onNext={(val) => updateBusinessDetails('cashDeposits', val)} onSaveExit={handleSaveExit} prefilled={isOBConnected} /></OnboardingLayout>;
 
-    // Step 24: Review & Submit
-    if (state.step === 24) return <OnboardingLayout currentStep={24} totalSteps={progressTotal} title="Review and submit" onSaveExit={handleSaveExit}><ScreenReviewOptimised state={state} onSubmit={() => setTimeout(() => nextStep(), 1500)} onEdit={goToStep} /></OnboardingLayout>;
+    // Steps 25-28: New Business Questions
+    if (state.step === 25) return <OnboardingLayout currentStep={25} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionCashPercentage onNext={(val) => updateBusinessDetails('cashPercentage', val)} onSaveExit={handleSaveExit} /></OnboardingLayout>;
 
-    // Step 25: Celebration
-    if (state.step === 25) return (
+    if (state.step === 26) return <OnboardingLayout currentStep={26} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionSourceOfFunds onNext={(val) => updateBusinessDetails('sourceOfFunds', val)} onSaveExit={handleSaveExit} /></OnboardingLayout>;
+
+    if (state.step === 27) return <OnboardingLayout currentStep={27} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionSourceOfWealth onNext={(val) => updateBusinessDetails('sourceOfWealth', val)} onSaveExit={handleSaveExit} /></OnboardingLayout>;
+
+    if (state.step === 28) return <OnboardingLayout currentStep={28} totalSteps={progressTotal} title="Business Activity" onSaveExit={handleSaveExit}><ScreenQuestionBalanceSheet onNext={(val) => updateBusinessDetails('balanceSheet', val)} onSaveExit={handleSaveExit} /></OnboardingLayout>;
+
+    // Step 29: Review & Submit (was 24)
+    if (state.step === 29) return <OnboardingLayout currentStep={29} totalSteps={progressTotal} title="Review and submit" onSaveExit={handleSaveExit}><ScreenReviewOptimised state={state} onSubmit={() => setTimeout(() => nextStep(), 1500)} onEdit={goToStep} /></OnboardingLayout>;
+
+    // Step 30: Celebration (was 25)
+    if (state.step === 30) return (
       <div className="fixed inset-0 bg-[var(--background-app)] z-50 overflow-y-auto">
         <ScreenDashboard
           mode="celebration"
           companyName={state.selectedCompany?.name || 'Bright Hospitality Ltd'}
           mandate={state.mandate}
-          onGoToDashboard={() => setState(prev => ({ ...prev, step: 26, dashboardView: 'main' }))}
+          onGoToDashboard={() => setState(prev => ({ ...prev, step: 31, dashboardView: 'main' }))}
         />
       </div>
     );
 
-    // Step 26: Dashboard (post-activation, same sub-view pattern as ideal step 15)
-    if (state.step === 26) {
+    // Step 31: Dashboard (was 26, post-activation, same sub-view pattern as ideal step 15)
+    if (state.step === 31) {
       const dashView = state.dashboardView;
 
       if (dashView === 'add-member') {
@@ -1301,6 +1364,18 @@ export function OnboardingFlow() {
         );
       }
 
+      // Sub-view: Second director journey preview
+      if (dashView === 'second-director-preview') {
+        const secondDirector = state.mandate.teamMembers.find(m => m.role === 'director');
+        return (
+          <ScreenSecondDirectorPreview
+            directorName={secondDirector?.name || 'Second Director'}
+            companyName={state.selectedCompany?.name || 'Bright Hospitality Ltd'}
+            onBack={() => setState(prev => ({ ...prev, dashboardView: 'main' }))}
+          />
+        );
+      }
+
       return (
         <div className="fixed inset-0 bg-[var(--background-app)] z-50 overflow-y-auto">
           <ScreenDashboard
@@ -1311,6 +1386,7 @@ export function OnboardingFlow() {
             onViewTeamStatus={() => setState(prev => ({ ...prev, dashboardView: 'team' }))}
             onSetupPaymentRules={() => setState(prev => ({ ...prev, dashboardView: 'approval-rules' }))}
             onSetupPaymentPermissions={() => setState(prev => ({ ...prev, dashboardView: 'mandate-summary' }))}
+            onPreviewSecondDirector={() => setState(prev => ({ ...prev, dashboardView: 'second-director-preview' }))}
             onDismissBanner={() => toast.info('Banner dismissed')}
           />
         </div>

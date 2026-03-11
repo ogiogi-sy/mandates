@@ -17,6 +17,7 @@ interface ScreenDashboardProps {
   onSetupPaymentPermissions?: () => void;
   onDismissBanner?: () => void;
   onViewTeamStatus?: () => void;
+  onPreviewSecondDirector?: () => void;
 }
 
 export function ScreenDashboard({
@@ -29,6 +30,7 @@ export function ScreenDashboard({
   onSetupPaymentPermissions,
   onDismissBanner,
   onViewTeamStatus,
+  onPreviewSecondDirector,
 }: ScreenDashboardProps) {
 
   if (mode === 'dashboard') {
@@ -40,6 +42,7 @@ export function ScreenDashboard({
       onSetupPaymentPermissions={onSetupPaymentPermissions}
       onDismissBanner={onDismissBanner}
       onViewTeamStatus={onViewTeamStatus}
+      onPreviewSecondDirector={onPreviewSecondDirector}
     />;
   }
 
@@ -283,7 +286,7 @@ export function ScreenDashboard({
               <div className="flex-1">
                 <h3 className="text-[var(--text-primary)] mb-1" style={{ fontSize: '14px' }}>Mandate confirmed</h3>
                 <p className="text-[var(--text-secondary)]" style={{ fontSize: '12px', lineHeight: '18px', fontWeight: 400 }}>
-                  Your approval rules and team are set. We'll notify you as each team member verifies their identity.
+                  Your approval rules and team are set. We'll notify you as each signatory verifies their identity.
                 </p>
               </div>
             </div>
@@ -316,6 +319,7 @@ function FullDashboard({
   onSetupPaymentPermissions,
   onDismissBanner,
   onViewTeamStatus,
+  onPreviewSecondDirector,
 }: {
   companyName: string;
   mandate?: MandateState;
@@ -324,6 +328,7 @@ function FullDashboard({
   onSetupPaymentPermissions?: () => void;
   onDismissBanner?: () => void;
   onViewTeamStatus?: () => void;
+  onPreviewSecondDirector?: () => void;
 }) {
   const [showSubscription, setShowSubscription] = useState(false);
   const [showFreeBanner, setShowFreeBanner] = useState(true);
@@ -335,7 +340,7 @@ function FullDashboard({
   const verifiedCount = mandate?.teamMembers.filter(m => m.status === 'verified').length ?? 0;
   const totalDirectors = (mandate?.teamMembers.filter(m => m.role === 'director').length ?? 0) + 1;
   const thresholdAmount = mandate?.thresholdAmount ?? 5000;
-  const activationStatus = mandate?.activationStatus ?? 'provisionally_active';
+  const activationStatus = mandate?.activationStatus ?? 'pending_approval';
   const isFullyActive = activationStatus === 'fully_active' || (isMandateConfirmed && allVerified);
 
   const formatCurrency = (amount: number) =>
@@ -371,7 +376,7 @@ function FullDashboard({
                   : <Lock size={10} className="text-white/60" />
                 }
                 <span className={isFullyActive ? 'text-[var(--emerald-600)]' : 'text-white/60'} style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.02em' }}>
-                  {isFullyActive ? 'FULLY ACTIVE' : 'PROVISIONALLY ACTIVE'}
+                  {isFullyActive ? 'FULLY ACTIVE' : 'PENDING APPROVAL'}
                 </span>
               </div>
             )}
@@ -486,9 +491,9 @@ function FullDashboard({
                 <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-[var(--accent-danger)] rounded-full border-2 border-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[var(--text-primary)]" style={{ fontSize: '16px', fontWeight: 600 }}>Set up your team</p>
+                <p className="text-[var(--text-primary)]" style={{ fontSize: '16px', fontWeight: 600 }}>Set up user administration</p>
                 <p className="text-[var(--text-secondary)]" style={{ fontSize: '13px', fontWeight: 400 }}>
-                  Add your directors and team members to get started.
+                  Add authorised signatories to get started.
                 </p>
               </div>
               <ChevronRight size={20} className="text-[var(--text-muted)] shrink-0" />
@@ -522,7 +527,7 @@ function FullDashboard({
                   </div>
                 </div>
                 <p className="text-[var(--text-muted)]" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
-                  You'll need a second verified director to unlock dual-approval payments.
+                  You'll need a second verified signatory to unlock dual-approval payments.
                 </p>
               </div>
             )}
@@ -532,7 +537,7 @@ function FullDashboard({
               <div className="bg-[var(--amber-50)] border border-[var(--amber-500)]/20 rounded-[var(--radius-md)] p-3 flex items-start gap-3">
                 <AlertTriangle size={16} className="text-[var(--amber-600)] mt-0.5 shrink-0" />
                 <p className="text-[var(--amber-600)]" style={{ fontSize: '13px', lineHeight: '18px', fontWeight: 400 }}>
-                  Payments above {formatCurrency(thresholdAmount)} are currently blocked. Add and verify a second director to enable full payments.
+                  Payments above {formatCurrency(thresholdAmount)} are currently blocked. Add and verify a second signatory to enable full payments.
                 </p>
               </div>
             )}
@@ -615,7 +620,7 @@ function FullDashboard({
                   Waiting for team verification
                 </p>
                 <p className="text-[var(--amber-600)]" style={{ fontSize: '12px', fontWeight: 400 }}>
-                  {verifiedCount} of {totalDirectors} directors verified. Payments above {formatCurrency(thresholdAmount)} need a second director.
+                  {verifiedCount} of {totalDirectors} signatories verified. Payments above {formatCurrency(thresholdAmount)} need a second signatory.
                 </p>
                 {onViewTeamStatus && (
                   <button
@@ -657,11 +662,32 @@ function FullDashboard({
                   </div>
                 </div>
                 <p className="text-[var(--text-muted)]" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
-                  We're waiting for a second director to verify and accept the mandate before we can enable dual-approval payments.
+                  We're waiting for a second signatory to verify and accept the mandate before we can enable dual-approval payments.
                 </p>
               </div>
             )}
           </>
+        )}
+
+        {/* Preview second signatory journey — always visible for multi-director */}
+        {isMultiDirector && onPreviewSecondDirector && (
+          <motion.button
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            onClick={onPreviewSecondDirector}
+            className="w-full bg-[var(--background-surface)] rounded-[var(--radius-lg)] border border-[var(--divider)] shadow-[var(--shadow-card-sm)] p-4 flex items-center gap-4 text-left hover:border-[var(--accent-primary)] transition-all"
+          >
+            <div className="w-12 h-12 rounded-full bg-[var(--blue-50)] text-[var(--accent-primary)] flex items-center justify-center shrink-0">
+              <Info size={22} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[var(--text-primary)]" style={{ fontSize: '16px', fontWeight: 600 }}>Second signatory journey</p>
+              <p className="text-[var(--text-secondary)]" style={{ fontSize: '13px', fontWeight: 400 }}>
+                See what the next signatory will experience.
+              </p>
+            </div>
+            <ChevronRight size={20} className="text-[var(--text-muted)] shrink-0" />
+          </motion.button>
         )}
 
         {/* Recent transactions */}

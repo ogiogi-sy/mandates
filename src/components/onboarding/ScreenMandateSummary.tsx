@@ -723,11 +723,13 @@ export function ScreenMandateSummary({
           : `${directors.filter(d => d.status !== 'verified').map(d => d.name).join(', ')} — verification in progress`,
       },
       {
-        label: 'All directors accepted mandate terms',
+        label: mandate.teamMembers.every(m => m.role !== 'director' || m.hasAcceptedMandate)
+          ? 'All directors accepted mandate terms'
+          : 'Directors will be asked to review mandate terms',
         done: mandate.teamMembers.every(m => m.role !== 'director' || m.hasAcceptedMandate),
         detail: mandate.teamMembers.every(m => m.role !== 'director' || m.hasAcceptedMandate)
           ? 'All directors have accepted digitally'
-          : "Some directors haven't accepted yet",
+          : 'Each director will review and accept the mandate when they first sign in',
       },
     ];
 
@@ -891,29 +893,40 @@ export function ScreenMandateSummary({
   /* ─────────────────────────────────────────────────
    * SECTION 7: Declaration
    * ───────────────────────────────────────────────── */
+  const isSoleDirectorMandate = mandate.authorityType === 'sole_director';
+
   const renderDeclaration = () => (
-    <label className="flex items-start gap-3 cursor-pointer p-4 rounded-[var(--radius-md)] bg-[var(--background-surface)] border border-[var(--divider)]">
-      <div className="mt-0.5 relative">
-        <input
-          type="checkbox"
-          checked={declared}
-          onChange={() => setDeclared(!declared)}
-          className="peer sr-only"
-        />
-        <div className={`
-          w-5 h-5 rounded-[4px] border-2 flex items-center justify-center transition-all shrink-0
-          peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--accent-primary)] peer-focus-visible:ring-offset-2
-          ${declared
-            ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)]'
-            : 'bg-white border-[var(--text-muted)]'}
-        `}>
-          {declared && <Check size={12} className="text-white" strokeWidth={3} />}
+    <div className="space-y-3">
+      <label className="flex items-start gap-3 cursor-pointer p-4 rounded-[var(--radius-md)] bg-[var(--background-surface)] border border-[var(--divider)]">
+        <div className="mt-0.5 relative">
+          <input
+            type="checkbox"
+            checked={declared}
+            onChange={() => setDeclared(!declared)}
+            className="peer sr-only"
+          />
+          <div className={`
+            w-5 h-5 rounded-[4px] border-2 flex items-center justify-center transition-all shrink-0
+            peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--accent-primary)] peer-focus-visible:ring-offset-2
+            ${declared
+              ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)]'
+              : 'bg-white border-[var(--text-muted)]'}
+          `}>
+            {declared && <Check size={12} className="text-white" strokeWidth={3} />}
+          </div>
         </div>
-      </div>
-      <span className="text-[var(--text-secondary)]" style={{ fontSize: '13px', lineHeight: '18px', fontWeight: 400 }}>
-        I confirm the people and permissions for this account are correct, and I'm authorised to set up access on behalf of the business.
-      </span>
-    </label>
+        <span className="text-[var(--text-secondary)]" style={{ fontSize: '13px', lineHeight: '18px', fontWeight: 400 }}>
+          {isSoleDirectorMandate
+            ? "I confirm I'm authorised to manage this account on behalf of the business."
+            : "I confirm I'm authorised to set up account access. All additional signatories will be asked to review and accept the mandate terms."}
+        </span>
+      </label>
+      {!isSoleDirectorMandate && (
+        <p className="text-[var(--text-muted)] px-1" style={{ fontSize: '12px', lineHeight: '16px', fontWeight: 400 }}>
+          Other signatories will review the mandate when they first sign in.
+        </p>
+      )}
+    </div>
   );
 
   /* ─────────────────────────────────────────────────

@@ -67,7 +67,7 @@ export function ScreenReviewOptimised({ state, onSubmit, onEdit }: ScreenReviewO
     {
       id: 'address',
       title: 'Trading Address',
-      step: 12,
+      step: 14,
       content: (
         <div className="space-y-3 text-sm">
            <div className="flex justify-between">
@@ -78,6 +78,25 @@ export function ScreenReviewOptimised({ state, onSubmit, onEdit }: ScreenReviewO
             <span className="text-[var(--text-secondary)]" style={{ fontWeight: 500 }}>Address</span>
             <span className="text-[var(--brand-primary-navy)] text-right max-w-[200px] truncate" style={{ fontWeight: 700 }}>
               {state.tradingAddress?.value || 'Same as registered'}
+            </span>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'correspondence',
+      title: 'Correspondence Address',
+      step: 15,
+      content: (
+        <div className="space-y-3 text-sm">
+          <div className="flex justify-between">
+            <span className="text-[var(--text-secondary)]" style={{ fontWeight: 500 }}>Type</span>
+            <span className="text-[var(--brand-primary-navy)] capitalize" style={{ fontWeight: 700 }}>{state.correspondenceAddress?.type || 'registered'}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-[var(--text-secondary)]" style={{ fontWeight: 500 }}>Address</span>
+            <span className="text-[var(--brand-primary-navy)] text-right max-w-[200px] truncate" style={{ fontWeight: 700 }}>
+              {state.correspondenceAddress?.value || state.selectedCompany?.address || 'Same as registered'}
             </span>
           </div>
         </div>
@@ -215,7 +234,7 @@ export function ScreenReviewOptimised({ state, onSubmit, onEdit }: ScreenReviewO
     {
       id: 'business',
       title: 'Business Activity',
-      step: 15,
+      step: 17,
       content: (
         <div className="space-y-3 text-sm">
           {state.businessDetails && (
@@ -244,6 +263,30 @@ export function ScreenReviewOptimised({ state, onSubmit, onEdit }: ScreenReviewO
                 <span className="text-[var(--text-secondary)]" style={{ fontWeight: 500 }}>Cash Deposits</span>
                 <span className="text-[var(--brand-primary-navy)]" style={{ fontWeight: 700 }}>{state.businessDetails.cashDeposits}</span>
               </div>
+              {state.businessDetails.cashPercentage && (
+                <div className="flex justify-between">
+                  <span className="text-[var(--text-secondary)]" style={{ fontWeight: 500 }}>Cash Revenue</span>
+                  <span className="text-[var(--brand-primary-navy)]" style={{ fontWeight: 700 }}>{state.businessDetails.cashPercentage}</span>
+                </div>
+              )}
+              {state.businessDetails.sourceOfFunds && state.businessDetails.sourceOfFunds.length > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-[var(--text-secondary)]" style={{ fontWeight: 500 }}>Source of Funds</span>
+                  <span className="text-[var(--brand-primary-navy)] text-right max-w-[180px]" style={{ fontWeight: 700 }}>{state.businessDetails.sourceOfFunds.join(', ')}</span>
+                </div>
+              )}
+              {state.businessDetails.sourceOfWealth && state.businessDetails.sourceOfWealth.length > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-[var(--text-secondary)]" style={{ fontWeight: 500 }}>Source of Wealth</span>
+                  <span className="text-[var(--brand-primary-navy)] text-right max-w-[180px]" style={{ fontWeight: 700 }}>{state.businessDetails.sourceOfWealth.join(', ')}</span>
+                </div>
+              )}
+              {state.businessDetails.balanceSheet && (
+                <div className="flex justify-between">
+                  <span className="text-[var(--text-secondary)]" style={{ fontWeight: 500 }}>Balance Sheet</span>
+                  <span className="text-[var(--brand-primary-navy)]" style={{ fontWeight: 700 }}>{state.businessDetails.balanceSheet}</span>
+                </div>
+              )}
             </>
           )}
         </div>
