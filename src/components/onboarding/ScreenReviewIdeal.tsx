@@ -1,6 +1,7 @@
 import { Check, Pencil, CheckCircle2, Shield, ChevronRight } from 'lucide-react';
 import { OnboardingState } from './types';
 import { StickyFooter } from './StickyFooter';
+import { SignaturePad } from './SignaturePad';
 
 import { useState } from 'react';
 
@@ -12,6 +13,7 @@ interface ScreenReviewIdealProps {
 
 export function ScreenReviewIdeal({ state, onSubmit, onEdit }: ScreenReviewIdealProps) {
   const [agreed, setAgreed] = useState(false);
+  const [hasSigned, setHasSigned] = useState(false);
 
   const getApplicantName = () => {
     const primary = state.directors.find(d => d.isPrimaryHolder);
@@ -244,14 +246,16 @@ export function ScreenReviewIdeal({ state, onSubmit, onEdit }: ScreenReviewIdeal
         </label>
       </div>
 
+      <SignaturePad applicantName={getApplicantName()} onSignatureChange={setHasSigned} />
+
       <StickyFooter>
         <button
           onClick={onSubmit}
-          disabled={!agreed}
+          disabled={!agreed || !hasSigned}
           className={`
             w-full h-[48px] rounded-full font-bold text-[16px] transition-all shadow-lg
-            ${agreed 
-              ? 'bg-brand-navy text-white hover:opacity-90' 
+            ${agreed && hasSigned
+              ? 'bg-brand-navy text-white hover:opacity-90'
               : 'bg-divider text-text-secondary cursor-not-allowed shadow-none'}
           `}
         >
